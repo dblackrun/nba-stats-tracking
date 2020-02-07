@@ -2,7 +2,7 @@ __pycache__/
 .vscode/
 .coverage
 env/
-nba_tracking.egg-info/
+nba_stats_tracking.egg-info/
 dist/
 build/
 notes.txt
