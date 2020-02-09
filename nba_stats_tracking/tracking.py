@@ -16,6 +16,8 @@ def get_tracking_response_json_for_stat_measure(stat_measure, season, season_typ
     possible kwargs:
     date_from - string, optional, format - MM/DD/YYYY
     date_to - string, optional, format - MM/DD/YYYY
+
+    returns dict
     """
     url = 'https://stats.nba.com/stats/leaguedashptstats'
 
@@ -55,6 +57,8 @@ def get_tracking_stats(stat_measure, seasons, season_types, entity_type, **kwarg
     possible kwargs:
     date_from - string, optional, format - MM/DD/YYYY
     date_to - string, optional, format - MM/DD/YYYY
+
+    returns list of dicts
     """
     all_season_stats = []
     for season in seasons:
@@ -90,6 +94,8 @@ def generate_tracking_game_logs(stat_measure, entity_type, date_from, date_to):
     entity_type - string, player, team
     date_from - string, format - MM/DD/YYYY
     date_to - string, format - MM/DD/YYYY
+
+    returns list of dicts
     """
     start_date = datetime.strptime(date_from, '%m/%d/%Y')
     end_date = datetime.strptime(date_to, '%m/%d/%Y')

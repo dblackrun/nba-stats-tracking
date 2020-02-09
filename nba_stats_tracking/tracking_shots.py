@@ -21,6 +21,8 @@ def get_tracking_shots_response(entity_type, season, season_type, **kwargs):
     touch_time - string, options are: '', 'Touch < 2 Seconds', 'Touch 2-6 Seconds', 'Touch 6+ Seconds'
     dribbles - string, options are: '', '0 Dribbles', '1 Dribble', '2 Dribbles', '3-6 Dribbles', '7+ Dribbles'
     general_range - string, options are: 'Overall', 'Catch and Shoot', 'Pullups', 'Less Than 10 ft'
+
+    returns dict
     """
     if entity_type == 'team':
         url = 'https://stats.nba.com/stats/leaguedashteamptshot'
@@ -63,6 +65,8 @@ def get_tracking_shot_stats(entity_type, seasons, season_types, **kwargs):
     general_ranges - list, options are: 'Overall', 'Catch and Shoot', 'Pullups', 'Less Than 10 ft'
     date_from - string, format - MM/DD/YYYY
     date_to - string, format - MM/DD/YYYY
+
+    returns list of dicts
     """
     all_season_stats = []
     for season in seasons:
@@ -133,6 +137,8 @@ def generate_tracking_shot_game_logs(entity_type, date_from, date_to, **kwargs):
     touch_times - list, options are: '', 'Touch < 2 Seconds', 'Touch 2-6 Seconds', 'Touch 6+ Seconds'
     dribble_ranges - list, options are: '', '0 Dribbles', '1 Dribble', '2 Dribbles', '3-6 Dribbles', '7+ Dribbles'
     general_ranges - list, options are: 'Overall', 'Catch and Shoot', 'Pullups', 'Less Than 10 ft'
+
+    returns list of dicts
     """
     start_date = datetime.strptime(date_from, '%m/%d/%Y')
     end_date = datetime.strptime(date_to, '%m/%d/%Y')
