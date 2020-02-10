@@ -50,6 +50,8 @@ shot_dists - list, options are: '', '>=10.0'
 touch_times - list, options are: '', 'Touch < 2 Seconds', 'Touch 2-6 Seconds', 'Touch 6+ Seconds'
 dribble_ranges - list, options are: '', '0 Dribbles', '1 Dribble', '2 Dribbles', '3-6 Dribbles', '7+ Dribbles'
 general_ranges - list, options are: 'Overall', 'Catch and Shoot', 'Pullups', 'Less Than 10 ft'
+periods - list of ints
+location - string, 'Home' or 'Road'
 ```
 
 ## Generating Tracking Shot Game Logs
