@@ -21,6 +21,8 @@ def get_tracking_shots_response(entity_type, season, season_type, **kwargs):
     touch_time - string, options are: '', 'Touch < 2 Seconds', 'Touch 2-6 Seconds', 'Touch 6+ Seconds'
     dribbles - string, options are: '', '0 Dribbles', '1 Dribble', '2 Dribbles', '3-6 Dribbles', '7+ Dribbles'
     general_range - string, options are: 'Overall', 'Catch and Shoot', 'Pullups', 'Less Than 10 ft'
+    period - int
+    location - string, options are: 'Home' and 'Road'
 
     returns dict
     """
@@ -46,6 +48,8 @@ def get_tracking_shots_response(entity_type, season, season_type, **kwargs):
         'GeneralRange': kwargs.get('general_range', 'Overall'),
         'PerMode': 'Totals',
         'LeagueID': '00',
+        'Period': kwargs.get('period', ''),
+        'Location': kwargs.get('location', ''),
     }
     return utils.get_json_response(url, parameters)
 
@@ -65,6 +69,8 @@ def get_tracking_shot_stats(entity_type, seasons, season_types, **kwargs):
     general_ranges - list, options are: 'Overall', 'Catch and Shoot', 'Pullups', 'Less Than 10 ft'
     date_from - string, format - MM/DD/YYYY
     date_to - string, format - MM/DD/YYYY
+    periods - list of ints
+    location - string, 'Home' or 'Road'
 
     returns list of dicts
     """
@@ -78,22 +84,25 @@ def get_tracking_shot_stats(entity_type, seasons, season_types, **kwargs):
                         for touch in kwargs.get('touch_times', ['']):
                             for dribbles in kwargs.get('dribble_ranges', ['']):
                                 for general in kwargs.get('general_ranges', ['Overall']):
-                                    time.sleep(2)
-                                    response_json = get_tracking_shots_response(
-                                        entity_type,
-                                        season,
-                                        season_type,
-                                        close_def_dist=close_def,
-                                        shot_clock=clock,
-                                        shot_dist=dist,
-                                        touch_time=touch,
-                                        dribbles=dribbles,
-                                        general_range=general,
-                                        date_from=kwargs.get('date_from', ''),
-                                        date_to=kwargs.get('date_to', ''),
-                                    )
-                                    filter_stats = utils.make_array_of_dicts_from_response_json(response_json, 0)
-                                    season_stats.append(filter_stats)
+                                    for period in kwargs.get('periods', ['']):
+                                        time.sleep(2)
+                                        response_json = get_tracking_shots_response(
+                                            entity_type,
+                                            season,
+                                            season_type,
+                                            close_def_dist=close_def,
+                                            shot_clock=clock,
+                                            shot_dist=dist,
+                                            touch_time=touch,
+                                            dribbles=dribbles,
+                                            general_range=general,
+                                            date_from=kwargs.get('date_from', ''),
+                                            date_to=kwargs.get('date_to', ''),
+                                            period=period,
+                                            location=kwargs.get('location', ''),
+                                        )
+                                        filter_stats = utils.make_array_of_dicts_from_response_json(response_json, 0)
+                                        season_stats.append(filter_stats)
             stats = sum_tracking_shot_totals(entity_type, *season_stats)
             entity_id_key = 'PLAYER_ID' if entity_type == 'player' else 'TEAM_ID'
             overall_response_json = get_tracking_shots_response(entity_type, season, season_type, general_range='Overall', date_from=kwargs.get('date_from', ''), date_to=kwargs.get('date_to', ''))
@@ -127,6 +136,8 @@ def aggregate_full_season_tracking_shot_stats_for_seasons(entity_type, seasons, 
     touch_times - list, options are: '', 'Touch < 2 Seconds', 'Touch 2-6 Seconds', 'Touch 6+ Seconds'
     dribble_ranges - list, options are: '', '0 Dribbles', '1 Dribble', '2 Dribbles', '3-6 Dribbles', '7+ Dribbles'
     general_ranges - list, options are: 'Overall', 'Catch and Shoot', 'Pullups', 'Less Than 10 ft'
+    periods - list of ints
+    location - string, 'Home' or 'Road'
 
     returns list of dicts for stats for each team or player and dict with league totals
     """
@@ -150,6 +161,8 @@ def generate_tracking_shot_game_logs(entity_type, date_from, date_to, **kwargs):
     touch_times - list, options are: '', 'Touch < 2 Seconds', 'Touch 2-6 Seconds', 'Touch 6+ Seconds'
     dribble_ranges - list, options are: '', '0 Dribbles', '1 Dribble', '2 Dribbles', '3-6 Dribbles', '7+ Dribbles'
     general_ranges - list, options are: 'Overall', 'Catch and Shoot', 'Pullups', 'Less Than 10 ft'
+    periods - list of ints
+    location - string, 'Home' or 'Road'
 
     returns list of dicts
     """
