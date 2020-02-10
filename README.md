@@ -75,6 +75,32 @@ Options for `entity_type` are 'player', 'team' or 'opponent'
 
 It also takes optional kwargs for each tracking shot filter option the same way as above.
 
+## Aggregating Multiple Tracking Shot Stat Filters and Grouping by Season
+
+```
+from nba_stats_tracking import tracking_shots
+
+seasons = ['2013-14', '2014-15', '2015-16', '2016-17', '2017-18', '2018-19', '2019-20']
+season_types = ['Regular Season']
+def_distances = ['6+ Feet - Wide Open', '4-6 Feet - Open']
+general_ranges = ['Catch and Shoot']
+
+stats = tracking_shots.get_tracking_shot_stats('player', seasons, season_types, close_def_dists=def_distances, general_ranges=general_ranges)
+
+for stat in stats:
+    print(stat)
+```
+
+`tracking_shots.aggregate_full_season_tracking_shot_stats_for_seasons` takes 3 required args `entity_type`, `seasons` and `season_types`
+
+Options for `entity_type` are 'player', 'team' or 'opponent'
+
+`seasons` is a list of seasons, format ex. '2018-19'
+
+`season_types` is a list of season types. Season types are 'Regular Season' and 'Playoffs'
+
+It also takes optional kwargs for each tracking shot filter option the same way as above.
+
 ## Aggregating Multiple Seasons of Tracking Stats
 
 ```
