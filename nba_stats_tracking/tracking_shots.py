@@ -95,8 +95,21 @@ def get_tracking_shot_stats(entity_type, seasons, season_types, **kwargs):
                                     filter_stats = utils.make_array_of_dicts_from_response_json(response_json, 0)
                                     season_stats.append(filter_stats)
             stats = sum_tracking_shot_totals(entity_type, *season_stats)
+            entity_id_key = 'PLAYER_ID' if entity_type == 'player' else 'TEAM_ID'
+            overall_response_json = get_tracking_shots_response(entity_type, season, season_type, general_range='Overall', date_from=kwargs.get('date_from', ''), date_to=kwargs.get('date_to', ''))
+            overall_stats = utils.make_array_of_dicts_from_response_json(overall_response_json, 0)
+            overall_stats_by_entity = {stat[entity_id_key]: {'FGA': stat['FGA'], 'FG2A': stat['FG2A'], 'FG3A': stat['FG3A']} for stat in overall_stats}
             for stat in stats:
+                entity_id = stat[entity_id_key]
                 stat['SEASON'] = f'{season} {season_type}'
+                stat['OVERALL_FGA'] = overall_stats_by_entity[entity_id]['FGA']
+                stat['OVERALL_FG2A'] = overall_stats_by_entity[entity_id]['FG2A']
+                stat['OVERALL_FG3A'] = overall_stats_by_entity[entity_id]['FG3A']
+                stat['FGA_FREQUENCY'] = stat['FGA'] / stat['OVERALL_FGA'] if stat['OVERALL_FGA'] != 0 else 0
+                stat['FG2A_FREQUENCY'] = stat['FG2A'] / stat['OVERALL_FGA'] if stat['OVERALL_FGA'] != 0 else 0
+                stat['FG3A_FREQUENCY'] = stat['FG3A'] / stat['OVERALL_FGA'] if stat['OVERALL_FGA'] != 0 else 0
+                stat['FREQUENCY_OF_FG2A'] = stat['FG2A'] / stat['OVERALL_FG2A'] if stat['OVERALL_FG2A'] != 0 else 0
+                stat['FREQUENCY_OF_FG3A'] = stat['FG3A'] / stat['OVERALL_FG3A'] if stat['OVERALL_FG3A'] != 0 else 0
             all_season_stats += stats
     return all_season_stats
 
@@ -185,6 +198,9 @@ def sum_tracking_shot_totals(entity_type, *args):
             'FG2A': 0,
             'FG3M': 0,
             'FG3A': 0,
+            'OVERALL_FGA': 0,
+            'OVERALL_FG2A': 0,
+            'OVERALL_FG3A': 0,
         }
         for items in args:
             for item in items:
@@ -209,6 +225,9 @@ def sum_tracking_shot_totals(entity_type, *args):
                         'FG2A': 0,
                         'FG3M': 0,
                         'FG3A': 0,
+                        'OVERALL_FGA': 0,
+                        'OVERALL_FG2A': 0,
+                        'OVERALL_FG3A': 0,
                     }
                 elif entity_type == 'team' or entity_type == 'opponent':
                     totals_dict[entity_id] = {
@@ -221,6 +240,9 @@ def sum_tracking_shot_totals(entity_type, *args):
                         'FG2A': 0,
                         'FG3M': 0,
                         'FG3A': 0,
+                        'OVERALL_FGA': 0,
+                        'OVERALL_FG2A': 0,
+                        'OVERALL_FG3A': 0,
                     }
             totals_dict[entity_id] = add_to_tracking_shot_totals(totals_dict[entity_id], item)
 
@@ -240,6 +262,9 @@ def add_to_tracking_shot_totals(totals, item):
     totals['FG2A'] += item['FG2A']
     totals['FG3M'] += item['FG3M']
     totals['FG3A'] += item['FG3A']
+    totals['OVERALL_FGA'] += item.get('OVERALL_FGA', 0)
+    totals['OVERALL_FG2A'] += item.get('OVERALL_FG2A', 0)
+    totals['OVERALL_FG3A'] += item.get('OVERALL_FG3A', 0)
     fg2a = totals['FG2A']
     fg2m = totals['FG2M']
     fg3a = totals['FG3A']
@@ -247,5 +272,10 @@ def add_to_tracking_shot_totals(totals, item):
     totals['FG2_PCT'] = fg2m / fg2a if fg2a != 0 else 0
     totals['FG3_PCT'] = fg3m / fg3a if fg3a != 0 else 0
     totals['EFG_PCT'] = (1.5 * fg3m + fg2m) / (fg3a + fg2a) if (fg3a + fg2a) != 0 else 0
+    totals['FGA_FREQUENCY'] = totals['FGA'] / totals['OVERALL_FGA'] if totals['OVERALL_FGA'] != 0 else 0
+    totals['FG2A_FREQUENCY'] = totals['FG2A'] / totals['OVERALL_FGA'] if totals['OVERALL_FGA'] != 0 else 0
+    totals['FG3A_FREQUENCY'] = totals['FG3A'] / totals['OVERALL_FGA'] if totals['OVERALL_FGA'] != 0 else 0
+    totals['FREQUENCY_OF_FG2A'] = totals['FG2A'] / totals['OVERALL_FG2A'] if totals['OVERALL_FG2A'] != 0 else 0
+    totals['FREQUENCY_OF_FG3A'] = totals['FG3A'] / totals['OVERALL_FG3A'] if totals['OVERALL_FG3A'] != 0 else 0
 
     return totals
