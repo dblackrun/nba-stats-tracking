@@ -152,3 +152,24 @@ Options for `stat_measure` are 'Drives', 'Defense', 'CatchShoot', 'Passing', 'Po
 Options for `entity_type` are 'player' or 'team'
 
 `date_from` and `date_to` are strings formatted MM/DD/YYYY
+
+## Get Opponent Tracking Stats For An Individual Team
+```
+from nba_stats_tracking import tracking
+
+stat_measure = 'CatchShoot'
+seasons = ['2019-20']
+season_types = ['Regular Season']
+entity_type = 'team'
+opponent_team_id = 1610612738
+
+# stats will be each team's stats against opponent_team_id
+# league_totals will be aggregate opponent stats for opponents of opponent_team_id
+stats, league_totals = tracking.aggregate_full_season_tracking_stats_for_seasons(stat_measure, seasons, season_types, entity_type, opponent_team_id=opponent_team_id)
+
+for stat in stats:
+    print(stat)
+print(league_totals)
+```
+
+To get opponent stats for all teams, just run this for each team id
