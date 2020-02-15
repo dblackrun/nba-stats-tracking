@@ -16,6 +16,7 @@ def get_tracking_response_json_for_stat_measure(stat_measure, season, season_typ
     possible kwargs:
     date_from - string, optional, format - MM/DD/YYYY
     date_to - string, optional, format - MM/DD/YYYY
+    opponent_team_id - int, optional, default is 0, which gets all teams
 
     returns dict
     """
@@ -33,7 +34,7 @@ def get_tracking_response_json_for_stat_measure(stat_measure, season, season_typ
         'LeagueID': '00',
         'Location': '',
         'Month': 0,
-        'OpponentTeamID': 0,
+        'OpponentTeamID': kwargs.get('opponent_team_id', 0),
         'Outcome': '',
         'PerMode': 'Totals',
         'PlayerExperience': '',
@@ -57,6 +58,7 @@ def get_tracking_stats(stat_measure, seasons, season_types, entity_type, **kwarg
     possible kwargs:
     date_from - string, optional, format - MM/DD/YYYY
     date_to - string, optional, format - MM/DD/YYYY
+    opponent_team_id - int, optional, default is 0, which gets all teams
 
     returns list of dicts
     """
@@ -72,16 +74,19 @@ def get_tracking_stats(stat_measure, seasons, season_types, entity_type, **kwarg
     return all_season_stats
 
 
-def aggregate_full_season_tracking_stats_for_seasons(stat_measure, seasons, season_types, entity_type):
+def aggregate_full_season_tracking_stats_for_seasons(stat_measure, seasons, season_types, entity_type, **kwargs):
     """
     stat_measure - string, options: 'Drives', 'Defense', 'CatchShoot', 'Passing', 'Possessions', 'PullUpShot', 'Rebounding', 'Efficiency', 'SpeedDistance', 'ElbowTouch', 'PostTouch', 'PaintTouch'
     seasons - list, ex season '2019-20'
     season_types - list, season types are 'Regular Season' or 'Playoffs'
     entity_type - string, 'player' or 'team'
 
+    possible kwargs:
+    opponent_team_id - int, optional, default is 0, which gets all teams
+
     returns list of dicts for stats for each team or player and dict with league totals
     """
-    stats_by_season = get_tracking_stats(stat_measure, seasons, season_types, entity_type)
+    stats_by_season = get_tracking_stats(stat_measure, seasons, season_types, entity_type, **kwargs)
 
     stats = sum_tracking_totals(entity_type, stats_by_season)
     league_totals = sum_tracking_totals('league', stats_by_season)
