@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/dblackrun/nba-stats-tracking.svg?branch=master)](https://travis-ci.org/dblackrun/nba-stats-tracking)
+[![PyPI version](https://badge.fury.io/py/nba-stats-tracking.svg)](https://badge.fury.io/py/nba-stats-tracking)
 
 A package to work with NBA player tracking stats using the NBA Stats API.
 
