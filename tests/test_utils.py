@@ -78,7 +78,7 @@ def test_get_boxscore_response_for_game():
 
 
 @responses.activate
-def test_get_team_id_game_id_map_for_date():
+def test_get_team_id_maps_for_date():
     with open('tests/data/scoreboard_response.json') as f:
         scoreboard_response = json.loads(f.read())
 
@@ -86,7 +86,7 @@ def test_get_team_id_game_id_map_for_date():
 
     responses.add(responses.GET, scoreboard_response_url, json=scoreboard_response, status=200)
     date = '02/02/2020'
-    team_id_game_id_map = utils.get_team_id_game_id_map_for_date(date)
+    team_id_game_id_map, team_id_opponent_map = utils.get_team_id_maps_for_date(date)
     assert team_id_game_id_map == {
         1610612743: '0021900737',
         1610612765: '0021900737',
@@ -96,6 +96,17 @@ def test_get_team_id_game_id_map_for_date():
         1610612749: '0021900739',
         1610612741: '0021900740',
         1610612761: '0021900740',
+    }
+
+    assert team_id_opponent_map == {
+        1610612743: 1610612765,
+        1610612765: 1610612743,
+        1610612740: 1610612745,
+        1610612745: 1610612740,
+        1610612756: 1610612749,
+        1610612749: 1610612756,
+        1610612741: 1610612761,
+        1610612761: 1610612741,
     }
 
 

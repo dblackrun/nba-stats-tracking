@@ -203,5 +203,6 @@ def test_generate_tracking_game_logs():
                 'CATCH_SHOOT_FG3_PCT': 0.2,
                 'CATCH_SHOOT_EFG_PCT': 0.3,
                 'SEASON': '2019-20 Regular Season',
-                'GAME_ID': '0021900740'
+                'GAME_ID': '0021900740',
+                'OPPONENT_TEAM_ID': 1610612741,
             }

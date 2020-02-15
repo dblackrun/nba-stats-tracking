@@ -421,6 +421,7 @@ def test_generate_tracking_shot_game_logs():
                 'EFG_PCT': 0.5,
                 'TEAM_ID': 1610612761,
                 'GAME_ID': '0021900740',
+                'OPPONENT_TEAM_ID': 1610612741,
                 'OVERALL_FG2A': 5,
                 'OVERALL_FG3A': 6,
                 'OVERALL_FGA': 11,

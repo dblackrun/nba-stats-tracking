@@ -171,7 +171,7 @@ def generate_tracking_shot_game_logs(entity_type, date_from, date_to, **kwargs):
     game_logs = []
     for dt in rrule(DAILY, dtstart=start_date, until=end_date):
         date = dt.strftime('%m/%d/%Y')
-        team_id_game_id_map = utils.get_team_id_game_id_map_for_date(date)
+        team_id_game_id_map, team_id_opponent_team_id_map = utils.get_team_id_maps_for_date(date)
         if len(team_id_game_id_map.values()) == 0:
             return game_logs
 
@@ -189,6 +189,7 @@ def generate_tracking_shot_game_logs(entity_type, date_from, date_to, **kwargs):
                 game_log['TEAM_ID'] = player_id_team_id_map[game_log['PLAYER_ID']]
         for game_log in tracking_shots_game_logs:
             game_log['GAME_ID'] = team_id_game_id_map[game_log['TEAM_ID']]
+            game_log['OPPONENT_TEAM_ID'] = team_id_opponent_team_id_map[game_log['TEAM_ID']]
         game_logs += tracking_shots_game_logs
     return game_logs
 

@@ -92,18 +92,21 @@ def get_boxscore_response_for_game(game_id):
     return get_json_response(url, parameters)
 
 
-def get_team_id_game_id_map_for_date(date):
+def get_team_id_maps_for_date(date):
     """
     date - string, format - MM/DD/YYYY
-    returns dict mapping team id to game id
+    returns dict mapping team id to game id and dict mapping team id to opponent team id
     """
     response_json = get_scoreboard_response_json_for_date(date)
     games = make_array_of_dicts_from_response_json(response_json, 0)
     team_id_game_id_map = {}
+    team_id_opponent_id_map = {}
     for game in games:
         team_id_game_id_map[game['HOME_TEAM_ID']] = game['GAME_ID']
         team_id_game_id_map[game['VISITOR_TEAM_ID']] = game['GAME_ID']
-    return team_id_game_id_map
+        team_id_opponent_id_map[game['HOME_TEAM_ID']] = game['VISITOR_TEAM_ID']
+        team_id_opponent_id_map[game['VISITOR_TEAM_ID']] = game['HOME_TEAM_ID']
+    return team_id_game_id_map, team_id_opponent_id_map
 
 
 def make_player_team_map_for_game(boxscore_data):
