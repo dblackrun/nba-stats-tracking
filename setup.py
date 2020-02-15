@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setup(
     name='nba_stats_tracking',
-    version='0.0.3',
+    version='0.0.4',
     author='Darryl Blackport',
     author_email='darryl.blackport@gmail.com',
     description='A package to work with NBA player tracking stats using the NBA Stats API',
