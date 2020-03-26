@@ -15,6 +15,9 @@ requires Python >=3.6
 pip install nba_stats_tracking
 ```
 
+# Notes
+It looks like prior to 2018-19 blocked shots aren't included in the FGA totals
+
 # Example Usage
 
 ## Aggregating Multiple Tracking Shot Stat Filters and/or Seasons
