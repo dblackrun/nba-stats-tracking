@@ -27,30 +27,30 @@ def get_tracking_shots_response(entity_type, season, season_type, **kwargs):
 
     returns dict
     """
-    if entity_type == 'team':
-        url = 'https://stats.nba.com/stats/leaguedashteamptshot'
-    elif entity_type == 'player':
-        url = 'https://stats.nba.com/stats/leaguedashplayerptshot'
-    elif entity_type == 'opponent':
-        url = 'https://stats.nba.com/stats/leaguedashoppptshot'
+    if entity_type == "team":
+        url = "https://stats.nba.com/stats/leaguedashteamptshot"
+    elif entity_type == "player":
+        url = "https://stats.nba.com/stats/leaguedashplayerptshot"
+    elif entity_type == "opponent":
+        url = "https://stats.nba.com/stats/leaguedashoppptshot"
     else:
         return None
 
     parameters = {
-        'Season': season,
-        'SeasonType': season_type,
-        'DateFrom': kwargs.get('date_from', ''),
-        'DateTo': kwargs.get('date_to', ''),
-        'CloseDefDistRange': kwargs.get('close_def_dist', ''),
-        'ShotClockRange': kwargs.get('shot_clock', ''),
-        'ShotDistRange': kwargs.get('shot_dist', ''),
-        'TouchTimeRange': kwargs.get('touch_time', ''),
-        'DribbleRange': kwargs.get('dribbles', ''),
-        'GeneralRange': kwargs.get('general_range', 'Overall'),
-        'PerMode': 'Totals',
-        'LeagueID': '00',
-        'Period': kwargs.get('period', ''),
-        'Location': kwargs.get('location', ''),
+        "Season": season,
+        "SeasonType": season_type,
+        "DateFrom": kwargs.get("date_from", ""),
+        "DateTo": kwargs.get("date_to", ""),
+        "CloseDefDistRange": kwargs.get("close_def_dist", ""),
+        "ShotClockRange": kwargs.get("shot_clock", ""),
+        "ShotDistRange": kwargs.get("shot_dist", ""),
+        "TouchTimeRange": kwargs.get("touch_time", ""),
+        "DribbleRange": kwargs.get("dribbles", ""),
+        "GeneralRange": kwargs.get("general_range", "Overall"),
+        "PerMode": "Totals",
+        "LeagueID": "00",
+        "Period": kwargs.get("period", ""),
+        "Location": kwargs.get("location", ""),
     }
     return utils.get_json_response(url, parameters)
 
@@ -75,14 +75,22 @@ def get_tracking_shot_stats(entity_type, seasons, season_types, **kwargs):
 
     returns list of dicts
     """
-    close_def_dists = kwargs.get('close_def_dists', [''])
-    shot_clocks = kwargs.get('shot_clocks', [''])
-    shot_dists = kwargs.get('shot_dists', [''])
-    touch_times = kwargs.get('touch_times', [''])
-    dribble_ranges = kwargs.get('dribble_ranges', [''])
-    general_ranges = kwargs.get('general_ranges', ['Overall'])
-    periods = kwargs.get('periods', [''])
-    filters = itertools.product(close_def_dists, shot_clocks, shot_dists, touch_times, dribble_ranges, general_ranges, periods)
+    close_def_dists = kwargs.get("close_def_dists", [""])
+    shot_clocks = kwargs.get("shot_clocks", [""])
+    shot_dists = kwargs.get("shot_dists", [""])
+    touch_times = kwargs.get("touch_times", [""])
+    dribble_ranges = kwargs.get("dribble_ranges", [""])
+    general_ranges = kwargs.get("general_ranges", ["Overall"])
+    periods = kwargs.get("periods", [""])
+    filters = itertools.product(
+        close_def_dists,
+        shot_clocks,
+        shot_dists,
+        touch_times,
+        dribble_ranges,
+        general_ranges,
+        periods,
+    )
 
     all_season_stats = []
     for season in seasons:
@@ -100,34 +108,72 @@ def get_tracking_shot_stats(entity_type, seasons, season_types, **kwargs):
                     touch_time=touch,
                     dribbles=dribbles,
                     general_range=general,
-                    date_from=kwargs.get('date_from', ''),
-                    date_to=kwargs.get('date_to', ''),
+                    date_from=kwargs.get("date_from", ""),
+                    date_to=kwargs.get("date_to", ""),
                     period=period,
-                    location=kwargs.get('location', ''),
+                    location=kwargs.get("location", ""),
                 )
-                filter_stats = utils.make_array_of_dicts_from_response_json(response_json, 0)
+                filter_stats = utils.make_array_of_dicts_from_response_json(
+                    response_json, 0
+                )
                 season_stats.append(filter_stats)
             stats = sum_tracking_shot_totals(entity_type, *season_stats)
-            entity_id_key = 'PLAYER_ID' if entity_type == 'player' else 'TEAM_ID'
-            overall_response_json = get_tracking_shots_response(entity_type, season, season_type, general_range='Overall', date_from=kwargs.get('date_from', ''), date_to=kwargs.get('date_to', ''))
-            overall_stats = utils.make_array_of_dicts_from_response_json(overall_response_json, 0)
-            overall_stats_by_entity = {stat[entity_id_key]: {'FGA': stat['FGA'], 'FG2A': stat['FG2A'], 'FG3A': stat['FG3A']} for stat in overall_stats}
+            entity_id_key = "PLAYER_ID" if entity_type == "player" else "TEAM_ID"
+            overall_response_json = get_tracking_shots_response(
+                entity_type,
+                season,
+                season_type,
+                general_range="Overall",
+                date_from=kwargs.get("date_from", ""),
+                date_to=kwargs.get("date_to", ""),
+            )
+            overall_stats = utils.make_array_of_dicts_from_response_json(
+                overall_response_json, 0
+            )
+            overall_stats_by_entity = {
+                stat[entity_id_key]: {
+                    "FGA": stat["FGA"],
+                    "FG2A": stat["FG2A"],
+                    "FG3A": stat["FG3A"],
+                }
+                for stat in overall_stats
+            }
             for stat in stats:
                 entity_id = stat[entity_id_key]
-                stat['SEASON'] = f'{season} {season_type}'
-                stat['OVERALL_FGA'] = overall_stats_by_entity[entity_id]['FGA']
-                stat['OVERALL_FG2A'] = overall_stats_by_entity[entity_id]['FG2A']
-                stat['OVERALL_FG3A'] = overall_stats_by_entity[entity_id]['FG3A']
-                stat['FGA_FREQUENCY'] = stat['FGA'] / stat['OVERALL_FGA'] if stat['OVERALL_FGA'] != 0 else 0
-                stat['FG2A_FREQUENCY'] = stat['FG2A'] / stat['OVERALL_FGA'] if stat['OVERALL_FGA'] != 0 else 0
-                stat['FG3A_FREQUENCY'] = stat['FG3A'] / stat['OVERALL_FGA'] if stat['OVERALL_FGA'] != 0 else 0
-                stat['FREQUENCY_OF_FG2A'] = stat['FG2A'] / stat['OVERALL_FG2A'] if stat['OVERALL_FG2A'] != 0 else 0
-                stat['FREQUENCY_OF_FG3A'] = stat['FG3A'] / stat['OVERALL_FG3A'] if stat['OVERALL_FG3A'] != 0 else 0
+                stat["SEASON"] = f"{season} {season_type}"
+                stat["OVERALL_FGA"] = overall_stats_by_entity[entity_id]["FGA"]
+                stat["OVERALL_FG2A"] = overall_stats_by_entity[entity_id]["FG2A"]
+                stat["OVERALL_FG3A"] = overall_stats_by_entity[entity_id]["FG3A"]
+                stat["FGA_FREQUENCY"] = (
+                    stat["FGA"] / stat["OVERALL_FGA"] if stat["OVERALL_FGA"] != 0 else 0
+                )
+                stat["FG2A_FREQUENCY"] = (
+                    stat["FG2A"] / stat["OVERALL_FGA"]
+                    if stat["OVERALL_FGA"] != 0
+                    else 0
+                )
+                stat["FG3A_FREQUENCY"] = (
+                    stat["FG3A"] / stat["OVERALL_FGA"]
+                    if stat["OVERALL_FGA"] != 0
+                    else 0
+                )
+                stat["FREQUENCY_OF_FG2A"] = (
+                    stat["FG2A"] / stat["OVERALL_FG2A"]
+                    if stat["OVERALL_FG2A"] != 0
+                    else 0
+                )
+                stat["FREQUENCY_OF_FG3A"] = (
+                    stat["FG3A"] / stat["OVERALL_FG3A"]
+                    if stat["OVERALL_FG3A"] != 0
+                    else 0
+                )
             all_season_stats += stats
     return all_season_stats
 
 
-def aggregate_full_season_tracking_shot_stats_for_seasons(entity_type, seasons, season_types, **kwargs):
+def aggregate_full_season_tracking_shot_stats_for_seasons(
+    entity_type, seasons, season_types, **kwargs
+):
     """
     entity_type - string, player, team, opponent
     seasons - list, ex season '2019-20'
@@ -145,10 +191,12 @@ def aggregate_full_season_tracking_shot_stats_for_seasons(entity_type, seasons, 
 
     returns list of dicts for stats for each team or player and dict with league totals
     """
-    stats_by_season = get_tracking_shot_stats(entity_type, seasons, season_types, **kwargs)
+    stats_by_season = get_tracking_shot_stats(
+        entity_type, seasons, season_types, **kwargs
+    )
 
     stats = sum_tracking_shot_totals(entity_type, stats_by_season)
-    league_totals = sum_tracking_shot_totals('league', stats_by_season)
+    league_totals = sum_tracking_shot_totals("league", stats_by_season)
     return stats, league_totals
 
 
@@ -170,12 +218,15 @@ def generate_tracking_shot_game_logs(entity_type, date_from, date_to, **kwargs):
 
     returns list of dicts
     """
-    start_date = datetime.strptime(date_from, '%m/%d/%Y')
-    end_date = datetime.strptime(date_to, '%m/%d/%Y')
+    start_date = datetime.strptime(date_from, "%m/%d/%Y")
+    end_date = datetime.strptime(date_to, "%m/%d/%Y")
     game_logs = []
     for dt in rrule(DAILY, dtstart=start_date, until=end_date):
-        date = dt.strftime('%m/%d/%Y')
-        team_id_game_id_map, team_id_opponent_team_id_map = utils.get_team_id_maps_for_date(date)
+        date = dt.strftime("%m/%d/%Y")
+        (
+            team_id_game_id_map,
+            team_id_opponent_team_id_map,
+        ) = utils.get_team_id_maps_for_date(date)
         if len(team_id_game_id_map.values()) == 0:
             return game_logs
 
@@ -184,16 +235,23 @@ def generate_tracking_shot_game_logs(entity_type, date_from, date_to, **kwargs):
         season = utils.get_season_from_game_id(date_game_id)
         season_type = utils.get_season_type_from_game_id(date_game_id)
 
-        tracking_shots_data = get_tracking_shot_stats(entity_type, [season], [season_type], date_from=date, date_to=date, **kwargs)
-        tracking_shots_game_logs = sum_tracking_shot_totals(entity_type, tracking_shots_data)
-        if entity_type == 'player':
-            # need to add team id for player because results only have PLAYER_LAST_TEAM_ID, which may not be the team for which they played the game
+        tracking_shots_data = get_tracking_shot_stats(
+            entity_type, [season], [season_type], date_from=date, date_to=date, **kwargs
+        )
+        tracking_shots_game_logs = sum_tracking_shot_totals(
+            entity_type, tracking_shots_data
+        )
+        if entity_type == "player":
+            # need to add team id for player because results only have PLAYER_LAST_TEAM_ID,
+            # which may not be the team for which they played the game
             player_id_team_id_map = utils.get_player_team_map_for_date(date)
             for game_log in tracking_shots_game_logs:
-                game_log['TEAM_ID'] = player_id_team_id_map[game_log['PLAYER_ID']]
+                game_log["TEAM_ID"] = player_id_team_id_map[game_log["PLAYER_ID"]]
         for game_log in tracking_shots_game_logs:
-            game_log['GAME_ID'] = team_id_game_id_map[game_log['TEAM_ID']]
-            game_log['OPPONENT_TEAM_ID'] = team_id_opponent_team_id_map[game_log['TEAM_ID']]
+            game_log["GAME_ID"] = team_id_game_id_map[game_log["TEAM_ID"]]
+            game_log["OPPONENT_TEAM_ID"] = team_id_opponent_team_id_map[
+                game_log["TEAM_ID"]
+            ]
         game_logs += tracking_shots_game_logs
     return game_logs
 
@@ -204,21 +262,21 @@ def sum_tracking_shot_totals(entity_type, *args):
 
     args - list of dicts to be summed up
     """
-    if entity_type == 'player':
-        entity_key = 'PLAYER_ID'
-    elif entity_type == 'team' or entity_type == 'opponent':
-        entity_key = 'TEAM_ID'
-    elif entity_type == 'league':
+    if entity_type == "player":
+        entity_key = "PLAYER_ID"
+    elif entity_type == "team" or entity_type == "opponent":
+        entity_key = "TEAM_ID"
+    elif entity_type == "league":
         totals_dict = {
-            'FGM': 0,
-            'FGA': 0,
-            'FG2M': 0,
-            'FG2A': 0,
-            'FG3M': 0,
-            'FG3A': 0,
-            'OVERALL_FGA': 0,
-            'OVERALL_FG2A': 0,
-            'OVERALL_FG3A': 0,
+            "FGM": 0,
+            "FGA": 0,
+            "FG2M": 0,
+            "FG2A": 0,
+            "FG3M": 0,
+            "FG3A": 0,
+            "OVERALL_FGA": 0,
+            "OVERALL_FG2A": 0,
+            "OVERALL_FG3A": 0,
         }
         for items in args:
             for item in items:
@@ -231,38 +289,42 @@ def sum_tracking_shot_totals(entity_type, *args):
         for item in items:
             entity_id = item[entity_key]
             if entity_id not in totals_dict.keys():
-                if entity_type == 'player':
+                if entity_type == "player":
                     totals_dict[entity_id] = {
-                        'PLAYER_ID': item['PLAYER_ID'],
-                        'PLAYER_NAME': item['PLAYER_NAME'],
-                        'PLAYER_LAST_TEAM_ID': item['PLAYER_LAST_TEAM_ID'],
-                        'PLAYER_LAST_TEAM_ABBREVIATION': item['PLAYER_LAST_TEAM_ABBREVIATION'],
-                        'FGM': 0,
-                        'FGA': 0,
-                        'FG2M': 0,
-                        'FG2A': 0,
-                        'FG3M': 0,
-                        'FG3A': 0,
-                        'OVERALL_FGA': 0,
-                        'OVERALL_FG2A': 0,
-                        'OVERALL_FG3A': 0,
+                        "PLAYER_ID": item["PLAYER_ID"],
+                        "PLAYER_NAME": item["PLAYER_NAME"],
+                        "PLAYER_LAST_TEAM_ID": item["PLAYER_LAST_TEAM_ID"],
+                        "PLAYER_LAST_TEAM_ABBREVIATION": item[
+                            "PLAYER_LAST_TEAM_ABBREVIATION"
+                        ],
+                        "FGM": 0,
+                        "FGA": 0,
+                        "FG2M": 0,
+                        "FG2A": 0,
+                        "FG3M": 0,
+                        "FG3A": 0,
+                        "OVERALL_FGA": 0,
+                        "OVERALL_FG2A": 0,
+                        "OVERALL_FG3A": 0,
                     }
-                elif entity_type == 'team' or entity_type == 'opponent':
+                elif entity_type == "team" or entity_type == "opponent":
                     totals_dict[entity_id] = {
-                        'TEAM_ID': item['TEAM_ID'],
-                        'TEAM_NAME': item['TEAM_NAME'],
-                        'TEAM_ABBREVIATION': item['TEAM_ABBREVIATION'],
-                        'FGM': 0,
-                        'FGA': 0,
-                        'FG2M': 0,
-                        'FG2A': 0,
-                        'FG3M': 0,
-                        'FG3A': 0,
-                        'OVERALL_FGA': 0,
-                        'OVERALL_FG2A': 0,
-                        'OVERALL_FG3A': 0,
+                        "TEAM_ID": item["TEAM_ID"],
+                        "TEAM_NAME": item["TEAM_NAME"],
+                        "TEAM_ABBREVIATION": item["TEAM_ABBREVIATION"],
+                        "FGM": 0,
+                        "FGA": 0,
+                        "FG2M": 0,
+                        "FG2A": 0,
+                        "FG3M": 0,
+                        "FG3A": 0,
+                        "OVERALL_FGA": 0,
+                        "OVERALL_FG2A": 0,
+                        "OVERALL_FG3A": 0,
                     }
-            totals_dict[entity_id] = add_to_tracking_shot_totals(totals_dict[entity_id], item)
+            totals_dict[entity_id] = add_to_tracking_shot_totals(
+                totals_dict[entity_id], item
+            )
 
     return list(totals_dict.values())
 
@@ -274,26 +336,36 @@ def add_to_tracking_shot_totals(totals, item):
     totals - dict
     item - dict
     """
-    totals['FGM'] += item['FGM']
-    totals['FGA'] += item['FGA']
-    totals['FG2M'] += item['FG2M']
-    totals['FG2A'] += item['FG2A']
-    totals['FG3M'] += item['FG3M']
-    totals['FG3A'] += item['FG3A']
-    totals['OVERALL_FGA'] += item.get('OVERALL_FGA', 0)
-    totals['OVERALL_FG2A'] += item.get('OVERALL_FG2A', 0)
-    totals['OVERALL_FG3A'] += item.get('OVERALL_FG3A', 0)
-    fg2a = totals['FG2A']
-    fg2m = totals['FG2M']
-    fg3a = totals['FG3A']
-    fg3m = totals['FG3M']
-    totals['FG2_PCT'] = fg2m / fg2a if fg2a != 0 else 0
-    totals['FG3_PCT'] = fg3m / fg3a if fg3a != 0 else 0
-    totals['EFG_PCT'] = (1.5 * fg3m + fg2m) / (fg3a + fg2a) if (fg3a + fg2a) != 0 else 0
-    totals['FGA_FREQUENCY'] = totals['FGA'] / totals['OVERALL_FGA'] if totals['OVERALL_FGA'] != 0 else 0
-    totals['FG2A_FREQUENCY'] = totals['FG2A'] / totals['OVERALL_FGA'] if totals['OVERALL_FGA'] != 0 else 0
-    totals['FG3A_FREQUENCY'] = totals['FG3A'] / totals['OVERALL_FGA'] if totals['OVERALL_FGA'] != 0 else 0
-    totals['FREQUENCY_OF_FG2A'] = totals['FG2A'] / totals['OVERALL_FG2A'] if totals['OVERALL_FG2A'] != 0 else 0
-    totals['FREQUENCY_OF_FG3A'] = totals['FG3A'] / totals['OVERALL_FG3A'] if totals['OVERALL_FG3A'] != 0 else 0
+    totals["FGM"] += item["FGM"]
+    totals["FGA"] += item["FGA"]
+    totals["FG2M"] += item["FG2M"]
+    totals["FG2A"] += item["FG2A"]
+    totals["FG3M"] += item["FG3M"]
+    totals["FG3A"] += item["FG3A"]
+    totals["OVERALL_FGA"] += item.get("OVERALL_FGA", 0)
+    totals["OVERALL_FG2A"] += item.get("OVERALL_FG2A", 0)
+    totals["OVERALL_FG3A"] += item.get("OVERALL_FG3A", 0)
+    fg2a = totals["FG2A"]
+    fg2m = totals["FG2M"]
+    fg3a = totals["FG3A"]
+    fg3m = totals["FG3M"]
+    totals["FG2_PCT"] = fg2m / fg2a if fg2a != 0 else 0
+    totals["FG3_PCT"] = fg3m / fg3a if fg3a != 0 else 0
+    totals["EFG_PCT"] = (1.5 * fg3m + fg2m) / (fg3a + fg2a) if (fg3a + fg2a) != 0 else 0
+    totals["FGA_FREQUENCY"] = (
+        totals["FGA"] / totals["OVERALL_FGA"] if totals["OVERALL_FGA"] != 0 else 0
+    )
+    totals["FG2A_FREQUENCY"] = (
+        totals["FG2A"] / totals["OVERALL_FGA"] if totals["OVERALL_FGA"] != 0 else 0
+    )
+    totals["FG3A_FREQUENCY"] = (
+        totals["FG3A"] / totals["OVERALL_FGA"] if totals["OVERALL_FGA"] != 0 else 0
+    )
+    totals["FREQUENCY_OF_FG2A"] = (
+        totals["FG2A"] / totals["OVERALL_FG2A"] if totals["OVERALL_FG2A"] != 0 else 0
+    )
+    totals["FREQUENCY_OF_FG3A"] = (
+        totals["FG3A"] / totals["OVERALL_FG3A"] if totals["OVERALL_FG3A"] != 0 else 0
+    )
 
     return totals
