@@ -7,3 +7,4 @@ dist/
 build/
 notes.txt
 debug.py
+docs/_build
