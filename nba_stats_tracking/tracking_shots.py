@@ -225,6 +225,15 @@ def generate_tracking_shot_game_logs(entity_type, date_from, date_to, **kwargs):
     :param str entity_type: Options are player, team or opponent
     :param str date_from: Format - MM/DD/YYYY
     :param str date_to: Format - MM/DD/YYYY
+    :param dict team_id_game_id_map: (optional) dict mapping team id to game id. When
+        getting game logs for multiple separate filters for the same date it is recommended
+        that you pass this in to avoid making the same request multiple times
+    :param dict team_id_opponent_team_id_map: (optional) dict mapping team id to opponent team id.
+        When getting game logs for multiple separate filters for the same date it is recommended
+        that you pass this in to avoid making the same request multiple times
+    :param dict player_id_team_id_map: (optional) dict mapping player id to team id. When
+        getting game logs for multiple separate filters for the same date it is recommended
+        that you pass this in to avoid making the same request multiple times
     :param list[str] close_def_dists: (optional) Options: '', '0-2 Feet - Very Tight',
         '2-4 Feet - Tight','4-6 Feet - Open','6+ Feet - Wide Open'
     :param list[str] shot_clocks: (optional) - Options: '', '24-22',
@@ -243,13 +252,17 @@ def generate_tracking_shot_game_logs(entity_type, date_from, date_to, **kwargs):
     """
     start_date = datetime.strptime(date_from, "%m/%d/%Y")
     end_date = datetime.strptime(date_to, "%m/%d/%Y")
+    team_id_game_id_map = kwargs.get("team_id_game_id_map")
+    team_id_opponent_team_id_map = kwargs.get("team_id_opponent_team_id_map")
+    player_id_team_id_map = kwargs.get("player_id_team_id_map")
     game_logs = []
     for dt in rrule(DAILY, dtstart=start_date, until=end_date):
         date = dt.strftime("%m/%d/%Y")
-        (
-            team_id_game_id_map,
-            team_id_opponent_team_id_map,
-        ) = utils.get_team_id_maps_for_date(date)
+        if team_id_game_id_map is None or team_id_opponent_team_id_map is None:
+            (
+                team_id_game_id_map,
+                team_id_opponent_team_id_map,
+            ) = utils.get_team_id_maps_for_date(date)
         if len(team_id_game_id_map.values()) == 0:
             return game_logs
 
@@ -267,7 +280,8 @@ def generate_tracking_shot_game_logs(entity_type, date_from, date_to, **kwargs):
         if entity_type == "player":
             # need to add team id for player because results only have PLAYER_LAST_TEAM_ID,
             # which may not be the team for which they played the game
-            player_id_team_id_map = utils.get_player_team_map_for_date(date)
+            if player_id_team_id_map is None:
+                player_id_team_id_map = utils.get_player_team_map_for_date(date)
             for game_log in tracking_shots_game_logs:
                 game_log["TEAM_ID"] = player_id_team_id_map[game_log["PLAYER_ID"]]
         for game_log in tracking_shots_game_logs:
