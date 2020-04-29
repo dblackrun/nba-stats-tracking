@@ -10,10 +10,12 @@ import requests
 
 def make_array_of_dicts_from_response_json(response_json, index):
     """
-    makes array of dicts from stats.nba.com response json
+    Makes array of dicts from stats.nba.com response json
 
-    response_json - dict
-    index - int, index that holds results in resultSets array, should be either 0 or 1
+    :param dict response_json: dict with response from request
+    :param int index: index that holds results in resultSets array
+    :return: list of dicts with data for each row
+    :rtype: list[dict]
     """
     headers = response_json["resultSets"][index]["headers"]
     rows = response_json["resultSets"][index]["rowSet"]
@@ -22,11 +24,12 @@ def make_array_of_dicts_from_response_json(response_json, index):
 
 def get_json_response(url, params):
     """
-    helper method to get json response
+    Helper function to get json response for request
 
-    args:
-    url - string, api endpoint
-    params - dict, query params
+    :param str url: base url for api endpoint
+    :param dict params: params for request
+    :return: response json
+    :rtype: dict
     """
     response = requests.get(
         url, params=params, headers=HEADERS, timeout=REQUEST_TIMEOUT
@@ -39,7 +42,11 @@ def get_json_response(url, params):
 
 def get_scoreboard_response_json_for_date(date):
     """
-    date - string, format - MM/DD/YYYY
+    Gets response from scoreboard endpoint
+
+    :param str date: Format - MM/DD/YYYY
+    :return: response json
+    :rtype: dict
     """
     parameters = {"DayOffset": 0, "LeagueID": "00", "gameDate": date}
     url = "https://stats.nba.com/stats/scoreboardV2"
@@ -49,7 +56,11 @@ def get_scoreboard_response_json_for_date(date):
 
 def get_game_ids_for_date(date):
     """
-    date - string, format - MM/DD/YYYY
+    Gets game ids for all games played on a given date
+
+    :param str date: Format - MM/DD/YYYY
+    :return: list of game ids
+    :rtype: list
     """
     response_json = get_scoreboard_response_json_for_date(date)
     games = make_array_of_dicts_from_response_json(response_json, 0)
@@ -58,8 +69,13 @@ def get_game_ids_for_date(date):
 
 def get_season_from_game_id(game_id):
     """
-    season is 4th and 5th digits of game id
+    Gets season from nba.com game id
+    4th and 5th digits of game id represent year season started
     ex 0021900001 is for the 2019-20 season
+
+    :param str game_id: nba.com game id
+    :return: season - Format YYYY-YY ex 2019-20
+    :rtype: string
     """
     if game_id[4] == "9":
         return "20" + game_id[3] + game_id[4] + "-" + str(int(game_id[3]) + 1) + "0"
@@ -71,7 +87,13 @@ def get_season_from_game_id(game_id):
 
 def get_season_type_from_game_id(game_id):
     """
-    season type is 3rd digit of game id, 2 is regular season, 4 is playoffs
+    Gets season type from nba.com game id
+    Season type is represented in 3rd digit of game id
+    2 is Regular Season, 4 is Playoffs
+
+    :param str game_id: nba.com game id
+    :return: season type - Regular Season or Playoffs
+    :rtype: string
     """
     if game_id[2] == "4":
         return PLAYOFFS_STRING
@@ -82,7 +104,11 @@ def get_season_type_from_game_id(game_id):
 
 def get_boxscore_response_for_game(game_id):
     """
-    game_id - string
+    Gets response from boxscore endpoint
+
+    :param str game_id: nba.com game id
+    :return: response json
+    :rtype: dict
     """
     url = "https://stats.nba.com/stats/boxscoretraditionalv2"
     parameters = {
@@ -99,8 +125,12 @@ def get_boxscore_response_for_game(game_id):
 
 def get_team_id_maps_for_date(date):
     """
-    date - string, format - MM/DD/YYYY
-    returns dict mapping team id to game id and dict mapping team id to opponent team id
+    Creates dicts mapping team id to game id and team id
+    to opponent team id for games on a given date
+
+    :param str date: Format - MM/DD/YYYY
+    :return: team id game id dict, team id opponent id dict
+    :rtype: tuple(dict, dict)
     """
     response_json = get_scoreboard_response_json_for_date(date)
     games = make_array_of_dicts_from_response_json(response_json, 0)
@@ -116,9 +146,11 @@ def get_team_id_maps_for_date(date):
 
 def make_player_team_map_for_game(boxscore_data):
     """
-    Makes a dict mapping player id to team id for game
+    Creates a dict mapping player id to team id for a game
 
-    boxscore_data - list of dicts of boxscore data for a game
+    :param dict boxscore_data: list of dicts with boxscore data for a game
+    :return: player id team id dict
+    :rtype: dict
     """
     player_game_team_map = {
         player["PLAYER_ID"]: player["TEAM_ID"] for player in boxscore_data
@@ -129,8 +161,11 @@ def make_player_team_map_for_game(boxscore_data):
 
 def get_player_team_map_for_date(date):
     """
-    date - string, format - MM/DD/YYYY
-    returns dict mapping player id to team id
+    Creates a dict mapping player id to team id for all games on a given date
+
+    :param str date: Format - MM/DD/YYYY
+    :return: player id team id dict
+    :rtype: dict
     """
     player_game_team_map = {}
     game_ids = get_game_ids_for_date(date)

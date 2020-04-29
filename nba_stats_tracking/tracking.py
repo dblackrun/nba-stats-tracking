@@ -10,17 +10,19 @@ def get_tracking_response_json_for_stat_measure(
     stat_measure, season, season_type, entity_type, **kwargs
 ):
     """
-    stat_measure - string, options: 'Drives', 'Defense', 'CatchShoot', 'Passing', 'Possessions', 'PullUpShot', 'Rebounding', 'Efficiency', 'SpeedDistance', 'ElbowTouch', 'PostTouch', 'PaintTouch'
-    season - string, ex '2019-20'
-    season_type - string, 'Regular Season' or 'Playoffs'
-    entity_type - string, 'player' or 'team'
+    Makes API call to `NBA Advanced Stats <https://www.stats.nba.com/>`_ and returns JSON response
 
-    possible kwargs:
-    date_from - string, optional, format - MM/DD/YYYY
-    date_to - string, optional, format - MM/DD/YYYY
-    opponent_team_id - int, optional, default is 0, which gets all teams
+    :param str stat_measure: Options: Drives, Defense, CatchShoot, Passing, Possessions,
+        PullUpShot, Rebounding, Efficiency, SpeedDistance, ElbowTouch, PostTouch, PaintTouch
+    :param str season: Format YYYY-YY ex 2019-20
+    :param str season_type: Options are Regular Season or Playoffs
+    :param str entity_type: Options are player or team
+    :param str date_from: (optional) Format - MM/DD/YYYY
+    :param str date_to: (optional) Format - MM/DD/YYYY
+    :param str opponent_team_id: (optional) nba.com team id
 
-    returns dict
+    :return: response json
+    :rtype: dict
     """
     url = "https://stats.nba.com/stats/leaguedashptstats"
 
@@ -52,17 +54,18 @@ def get_tracking_response_json_for_stat_measure(
 
 def get_tracking_stats(stat_measure, seasons, season_types, entity_type, **kwargs):
     """
-    stat_measure - string, options: 'Drives', 'Defense', 'CatchShoot', 'Passing', 'Possessions', 'PullUpShot', 'Rebounding', 'Efficiency', 'SpeedDistance', 'ElbowTouch', 'PostTouch', 'PaintTouch'
-    seasons - list, ex season '2019-20'
-    season_types - list, season types are 'Regular Season' or 'Playoffs'
-    entity_type - string, 'player' or 'team'
+    Gets stat measure tracking stats for filter
 
-    possible kwargs:
-    date_from - string, optional, format - MM/DD/YYYY
-    date_to - string, optional, format - MM/DD/YYYY
-    opponent_team_id - int, optional, default is 0, which gets all teams
-
-    returns list of dicts
+    :param str stat_measure: Options: Drives, Defense, CatchShoot, Passing, Possessions,
+        PullUpShot, Rebounding, Efficiency, SpeedDistance, ElbowTouch, PostTouch, PaintTouch
+    :param list[str] seasons: List of seasons.Format YYYY-YY ex 2019-20
+    :param list[str] season_types: List of season types. Options are Regular Season or Playoffs
+    :param str entity_type: Options are player or team
+    :param str date_from: (optional) Format - MM/DD/YYYY
+    :param str date_to: (optional) Format - MM/DD/YYYY
+    :param str opponent_team_id: (optional) nba.com team id
+    :return: list of dicts with stats for each player/team
+    :rtype: list[dict]
     """
     all_season_stats = []
     for season in seasons:
@@ -82,15 +85,17 @@ def aggregate_full_season_tracking_stats_for_seasons(
     stat_measure, seasons, season_types, entity_type, **kwargs
 ):
     """
-    stat_measure - string, options: 'Drives', 'Defense', 'CatchShoot', 'Passing', 'Possessions', 'PullUpShot', 'Rebounding', 'Efficiency', 'SpeedDistance', 'ElbowTouch', 'PostTouch', 'PaintTouch'
-    seasons - list, ex season '2019-20'
-    season_types - list, season types are 'Regular Season' or 'Playoffs'
-    entity_type - string, 'player' or 'team'
+    Aggregates full season stats for stat measure for desired filters.
+    Returns list of dicts for stats for each team/player and dict with league totals.
 
-    possible kwargs:
-    opponent_team_id - int, optional, default is 0, which gets all teams
-
-    returns list of dicts for stats for each team or player and dict with league totals
+    :param str stat_measure: Options: Drives, Defense, CatchShoot, Passing, Possessions,
+        PullUpShot, Rebounding, Efficiency, SpeedDistance, ElbowTouch, PostTouch, PaintTouch
+    :param list[str] seasons: List of seasons.Format YYYY-YY ex 2019-20
+    :param list[str] season_types: List of season types. Options are Regular Season or Playoffs
+    :param str entity_type: Options are player or team
+    :param str opponent_team_id: (optional) nba.com team id
+    :return: tuple with list of dicts for stats for each player/team and dict with league totals
+    :rtype: tuple(list[dict], dict)
     """
     stats_by_season = get_tracking_stats(
         stat_measure, seasons, season_types, entity_type, **kwargs
@@ -103,12 +108,15 @@ def aggregate_full_season_tracking_stats_for_seasons(
 
 def generate_tracking_game_logs(stat_measure, entity_type, date_from, date_to):
     """
-    stat_measure - string, options: 'Drives', 'Defense', 'CatchShoot', 'Passing', 'Possessions', 'PullUpShot', 'Rebounding', 'Efficiency', 'SpeedDistance', 'ElbowTouch', 'PostTouch', 'PaintTouch'
-    entity_type - string, player, team
-    date_from - string, format - MM/DD/YYYY
-    date_to - string, format - MM/DD/YYYY
+    Generates game logs for all games between two dates for desired filters
 
-    returns list of dicts
+    :param str stat_measure: Options: Drives, Defense, CatchShoot, Passing, Possessions,
+        PullUpShot, Rebounding, Efficiency, SpeedDistance, ElbowTouch, PostTouch, PaintTouch
+    :param str entity_type: Options are player or team
+    :param str date_from: Format - MM/DD/YYYY
+    :param str date_to: Format - MM/DD/YYYY
+    :return: list of game log dicts
+    :rtype: list[dict]
     """
     start_date = datetime.strptime(date_from, "%m/%d/%Y")
     end_date = datetime.strptime(date_to, "%m/%d/%Y")
@@ -150,10 +158,13 @@ def generate_tracking_game_logs(stat_measure, entity_type, date_from, date_to):
 
 
 def sum_tracking_totals(entity_type, *args):
-    """
-    entity_type - string, player, team or league
+    r"""
+    Sums totals for given dicts and grouped by entity type
 
-    args - list of dicts to be summed up
+    :param str entity_type: Options are player, team, opponent or league
+    :param dict \*args: Variable length argument list of dicts to be summed up
+    :return: list of dicts with totals for each entity
+    :rtype: list[dict]
     """
     if entity_type == "player":
         entity_key = "PLAYER_ID"
@@ -194,10 +205,12 @@ def sum_tracking_totals(entity_type, *args):
 
 def add_to_tracking_totals(totals, item):
     """
-    adds totals from item to totals dict
+    Adds totals from item to totals
 
-    totals - dict
-    item - dict
+    :param dict totals: Totals to be added to
+    :param dict item: Item to be added to totals dict
+    :return: totals dict
+    :rtype: dict
     """
     for key, value in item.items():
         if (

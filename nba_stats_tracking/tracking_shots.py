@@ -1,3 +1,5 @@
+"""Module containing functions for accessing tracking shot stats"""
+
 import time
 import itertools
 
@@ -9,23 +11,28 @@ from nba_stats_tracking import utils
 
 def get_tracking_shots_response(entity_type, season, season_type, **kwargs):
     """
-    entity_type - string, player, team, opponent
-    season - string, ex 2019-20
-    season_type - string, Regular Season or Playoffs
+    Makes API call to `NBA Advanced Stats <https://www.stats.nba.com/>`_ and returns JSON response
 
-    possible kwargs:
-    date_from - string, optional, format - MM/DD/YYYY
-    date_to - string, optional, format - MM/DD/YYYY
-    close_def_dist - string, options are: '', '0-2 Feet - Very Tight','2-4 Feet - Tight','4-6 Feet - Open','6+ Feet - Wide Open'
-    shot_clock - string, options are: '', '24-22', '22-18 Very Early', '18-15 Early', '15-7 Average', '7-4 Late', '4-0 Very Late', 'ShotClock Off'
-    shot_dist - string, options are: '', '>=10.0'
-    touch_time - string, options are: '', 'Touch < 2 Seconds', 'Touch 2-6 Seconds', 'Touch 6+ Seconds'
-    dribbles - string, options are: '', '0 Dribbles', '1 Dribble', '2 Dribbles', '3-6 Dribbles', '7+ Dribbles'
-    general_range - string, options are: 'Overall', 'Catch and Shoot', 'Pullups', 'Less Than 10 ft'
-    period - int
-    location - string, options are: 'Home' and 'Road'
-
-    returns dict
+    :param str entity_type: Options are player, team or opponent
+    :param str season: Format YYYY-YY ex 2019-20
+    :param str season_type: Options are Regular Season or Playoffs
+    :param str date_from: (optional) Format - MM/DD/YYYY
+    :param str date_to: (optional) Format - MM/DD/YYYY
+    :param str close_def_dist: (optional) Defaults to "". Options: '', '0-2 Feet - Very Tight',
+        '2-4 Feet - Tight','4-6 Feet - Open','6+ Feet - Wide Open'
+    :param str shot_clock: (optional) - Defaults to "". Options: '', '24-22',
+        '22-18 Very Early', '18-15 Early', '15-7 Average', '7-4 Late', '4-0 Very Late'
+    :param str shot_dist: (optional) - Defaults to "". Options: '', '>=10.0'
+    :param str touch_time: (optional) - Defaults to "". Options: '', 'Touch < 2 Seconds',
+        'Touch 2-6 Seconds', 'Touch 6+ Seconds'
+    :param str dribbles: (optional) - Defaults to "". Options: '', '0 Dribbles', '1 Dribble',
+        '2 Dribbles', '3-6 Dribbles', '7+ Dribbles'
+    :param str general_range: (optional) - Defaults to "Overall". Options: 'Overall',
+        'Catch and Shoot', 'Pullups', 'Less Than 10 ft'
+    :param int period: (optional) Only get stats for specific period
+    :param str location: (optional) - Options: 'Home' or 'Road'
+    :return: response json
+    :rtype: dict
     """
     if entity_type == "team":
         url = "https://stats.nba.com/stats/leaguedashteamptshot"
@@ -57,23 +64,28 @@ def get_tracking_shots_response(entity_type, season, season_type, **kwargs):
 
 def get_tracking_shot_stats(entity_type, seasons, season_types, **kwargs):
     """
-    entity_type - string, player, team, opponent
-    seasons - list, ex season '2019-20'
-    season_types - list, season types are 'Regular Season' or 'Playoffs'
+    Gets tracking shot stats for filters
 
-    possible kwargs:
-    close_def_dists - list, options are: '', '0-2 Feet - Very Tight','2-4 Feet - Tight','4-6 Feet - Open','6+ Feet - Wide Open'
-    shot_clocks - list, options are: '', '24-22', '22-18 Very Early', '18-15 Early', '15-7 Average', '7-4 Late', '4-0 Very Late', 'ShotClock Off'
-    shot_dists - list, options are: '', '>=10.0'
-    touch_times - list, options are: '', 'Touch < 2 Seconds', 'Touch 2-6 Seconds', 'Touch 6+ Seconds'
-    dribble_ranges - list, options are: '', '0 Dribbles', '1 Dribble', '2 Dribbles', '3-6 Dribbles', '7+ Dribbles'
-    general_ranges - list, options are: 'Overall', 'Catch and Shoot', 'Pullups', 'Less Than 10 ft'
-    date_from - string, format - MM/DD/YYYY
-    date_to - string, format - MM/DD/YYYY
-    periods - list of ints
-    location - string, 'Home' or 'Road'
-
-    returns list of dicts
+    :param str entity_type: Options are player, team or opponent
+    :param list[str] seasons: List of seasons.Format YYYY-YY ex 2019-20
+    :param list[str] season_types: List of season types. Options are Regular Season or Playoffs
+    :param list[str] close_def_dists: (optional) Options: '', '0-2 Feet - Very Tight',
+        '2-4 Feet - Tight','4-6 Feet - Open','6+ Feet - Wide Open'
+    :param list[str] shot_clocks: (optional) - Options: '', '24-22',
+        '22-18 Very Early', '18-15 Early', '15-7 Average', '7-4 Late', '4-0 Very Late'
+    :param list[str] shot_dists: (optional) - Options: '', '>=10.0'
+    :param list[str] touch_times: (optional) - Options: '', 'Touch < 2 Seconds',
+        'Touch 2-6 Seconds', 'Touch 6+ Seconds'
+    :param list[str] dribble_ranges: (optional) - Options: '', '0 Dribbles', '1 Dribble',
+        '2 Dribbles', '3-6 Dribbles', '7+ Dribbles'
+    :param list[str] general_ranges: (optional) - Options: 'Overall',
+        'Catch and Shoot', 'Pullups', 'Less Than 10 ft'
+    :param str date_from: (optional) Format - MM/DD/YYYY
+    :param str date_to: (optional) Format - MM/DD/YYYY
+    :param list[int] periods: (optional) Only get stats for specific periods
+    :param str location: (optional) - Options: 'Home' or 'Road'
+    :return: list of dicts with stats for each player/team
+    :rtype: list[dict]
     """
     close_def_dists = kwargs.get("close_def_dists", [""])
     shot_clocks = kwargs.get("shot_clocks", [""])
@@ -175,21 +187,27 @@ def aggregate_full_season_tracking_shot_stats_for_seasons(
     entity_type, seasons, season_types, **kwargs
 ):
     """
-    entity_type - string, player, team, opponent
-    seasons - list, ex season '2019-20'
-    season_types - list, season types are 'Regular Season' or 'Playoffs'
+    Aggregates full season stats for desired filters.
+    Returns list of dicts for stats for each team/player and dict with league totals.
 
-    possible kwargs:
-    close_def_dists - list, options are: '', '0-2 Feet - Very Tight','2-4 Feet - Tight','4-6 Feet - Open','6+ Feet - Wide Open'
-    shot_clocks - list, options are: '', '24-22', '22-18 Very Early', '18-15 Early', '15-7 Average', '7-4 Late', '4-0 Very Late', 'ShotClock Off'
-    shot_dists - list, options are: '', '>=10.0'
-    touch_times - list, options are: '', 'Touch < 2 Seconds', 'Touch 2-6 Seconds', 'Touch 6+ Seconds'
-    dribble_ranges - list, options are: '', '0 Dribbles', '1 Dribble', '2 Dribbles', '3-6 Dribbles', '7+ Dribbles'
-    general_ranges - list, options are: 'Overall', 'Catch and Shoot', 'Pullups', 'Less Than 10 ft'
-    periods - list of ints
-    location - string, 'Home' or 'Road'
-
-    returns list of dicts for stats for each team or player and dict with league totals
+    :param str entity_type: Options are player, team or opponent
+    :param list[str] seasons: List of seasons.Format YYYY-YY ex 2019-20
+    :param list[str] season_types: List of season types. Options are Regular Season or Playoffs
+    :param list[str] close_def_dists: (optional) Options: '', '0-2 Feet - Very Tight',
+        '2-4 Feet - Tight','4-6 Feet - Open','6+ Feet - Wide Open'
+    :param list[str] shot_clocks: (optional) - Options: '', '24-22',
+        '22-18 Very Early', '18-15 Early', '15-7 Average', '7-4 Late', '4-0 Very Late'
+    :param list[str] shot_dists: (optional) - Options: '', '>=10.0'
+    :param list[str] touch_times: (optional) - Options: '', 'Touch < 2 Seconds',
+        'Touch 2-6 Seconds', 'Touch 6+ Seconds'
+    :param list[str] dribble_ranges: (optional) - Options: '', '0 Dribbles', '1 Dribble',
+        '2 Dribbles', '3-6 Dribbles', '7+ Dribbles'
+    :param list[str] general_ranges: (optional) - Options: 'Overall',
+        'Catch and Shoot', 'Pullups', 'Less Than 10 ft'
+    :param list[int] periods: (optional) Only get stats for specific periods
+    :param str location: (optional) - Options: 'Home' or 'Road'
+    :return: tuple with list of dicts for stats for each player/team and dict with league totals
+    :rtype: tuple(list[dict], dict)
     """
     stats_by_season = get_tracking_shot_stats(
         entity_type, seasons, season_types, **kwargs
@@ -202,21 +220,26 @@ def aggregate_full_season_tracking_shot_stats_for_seasons(
 
 def generate_tracking_shot_game_logs(entity_type, date_from, date_to, **kwargs):
     """
-    entity_type - string, player, team, opponent
-    date_from - string, format - MM/DD/YYYY
-    date_to - string, format - MM/DD/YYYY
+    Generates game logs for all games between two dates for desired filters
 
-    possible kwargs:
-    close_def_dists - list, options are: '', '0-2 Feet - Very Tight','2-4 Feet - Tight','4-6 Feet - Open','6+ Feet - Wide Open'
-    shot_clocks - list, options are: '', '24-22', '22-18 Very Early', '18-15 Early', '15-7 Average', '7-4 Late', '4-0 Very Late', 'ShotClock Off'
-    shot_dists - list, options are: '', '>=10.0'
-    touch_times - list, options are: '', 'Touch < 2 Seconds', 'Touch 2-6 Seconds', 'Touch 6+ Seconds'
-    dribble_ranges - list, options are: '', '0 Dribbles', '1 Dribble', '2 Dribbles', '3-6 Dribbles', '7+ Dribbles'
-    general_ranges - list, options are: 'Overall', 'Catch and Shoot', 'Pullups', 'Less Than 10 ft'
-    periods - list of ints
-    location - string, 'Home' or 'Road'
-
-    returns list of dicts
+    :param str entity_type: Options are player, team or opponent
+    :param str date_from: Format - MM/DD/YYYY
+    :param str date_to: Format - MM/DD/YYYY
+    :param list[str] close_def_dists: (optional) Options: '', '0-2 Feet - Very Tight',
+        '2-4 Feet - Tight','4-6 Feet - Open','6+ Feet - Wide Open'
+    :param list[str] shot_clocks: (optional) - Options: '', '24-22',
+        '22-18 Very Early', '18-15 Early', '15-7 Average', '7-4 Late', '4-0 Very Late'
+    :param list[str] shot_dists: (optional) - Options: '', '>=10.0'
+    :param list[str] touch_times: (optional) - Options: '', 'Touch < 2 Seconds',
+        'Touch 2-6 Seconds', 'Touch 6+ Seconds'
+    :param list[str] dribble_ranges: (optional) - Options: '', '0 Dribbles', '1 Dribble',
+        '2 Dribbles', '3-6 Dribbles', '7+ Dribbles'
+    :param list[str] general_ranges: (optional) - Options: 'Overall',
+        'Catch and Shoot', 'Pullups', 'Less Than 10 ft'
+    :param list[int] periods: (optional) Only get stats for specific periods
+    :param str location: (optional) - Options: 'Home' or 'Road'
+    :return: list of game log dicts
+    :rtype: list[dict]
     """
     start_date = datetime.strptime(date_from, "%m/%d/%Y")
     end_date = datetime.strptime(date_to, "%m/%d/%Y")
@@ -257,10 +280,13 @@ def generate_tracking_shot_game_logs(entity_type, date_from, date_to, **kwargs):
 
 
 def sum_tracking_shot_totals(entity_type, *args):
-    """
-    entity_type - string, player, team, opponent or league
+    r"""
+    Sums totals for given dicts and grouped by entity type
 
-    args - list of dicts to be summed up
+    :param str entity_type: Options are player, team, opponent or league
+    :param dict \*args: Variable length argument list of dicts to be summed up
+    :return: list of dicts with totals for each entity
+    :rtype: list[dict]
     """
     if entity_type == "player":
         entity_key = "PLAYER_ID"
@@ -331,10 +357,12 @@ def sum_tracking_shot_totals(entity_type, *args):
 
 def add_to_tracking_shot_totals(totals, item):
     """
-    adds shot totals from item to totals dict and updates percentages
+    Adds shot totals from item to totals and updates percentages
 
-    totals - dict
-    item - dict
+    :param dict totals: Totals to be added to
+    :param dict item: Item to be added to totals dict
+    :return: totals dict
+    :rtype: dict
     """
     totals["FGM"] += item["FGM"]
     totals["FGA"] += item["FGA"]

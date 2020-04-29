@@ -1,3 +1,10 @@
+"""
+NBA Stats Tracking
+~~~~~~~~~~~~~~~~~~~~
+A package to work with NBA player tracking stats from
+`NBA Advanced Stats <https://www.stats.nba.com/>`_.
+"""
+
 REQUEST_TIMEOUT = 10
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0"
 REFERER = "http://stats.nba.com/"
