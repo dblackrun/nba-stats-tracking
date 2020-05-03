@@ -6,6 +6,13 @@
 NBA Stats Tracking Documentation
 =================================
 
+Features
+-----------
+* Works with both tracking stats and tracking shot stats
+* Aggregate stats across multiple seasons
+* Aggregate tracking shot stats across multiple filters (ex Wide Open and 18-22 seconds left on the shot clock)
+* Generate game logs
+
 Quickstart Guide
 ----------------
 
@@ -21,3 +28,7 @@ Documentation
    :maxdepth: 4
 
    source/modules
+
+Notes
+------
+It looks like prior to 2018-19 blocked shots aren't included in the FGA tracking shot totals
