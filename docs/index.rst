@@ -6,6 +6,8 @@
 NBA Stats Tracking Documentation
 =================================
 
+A package to simplify working with NBA player tracking stats from `NBA Advanced Stats <https://www.stats.nba.com/>`_.
+
 Features
 -----------
 * Works with both tracking stats and tracking shot stats
