@@ -94,14 +94,16 @@ def get_tracking_shot_stats(entity_type, seasons, season_types, **kwargs):
     dribble_ranges = kwargs.get("dribble_ranges", [""])
     general_ranges = kwargs.get("general_ranges", ["Overall"])
     periods = kwargs.get("periods", [""])
-    filters = itertools.product(
-        close_def_dists,
-        shot_clocks,
-        shot_dists,
-        touch_times,
-        dribble_ranges,
-        general_ranges,
-        periods,
+    filters = list(
+        itertools.product(
+            close_def_dists,
+            shot_clocks,
+            shot_dists,
+            touch_times,
+            dribble_ranges,
+            general_ranges,
+            periods,
+        )
     )
 
     all_season_stats = []
