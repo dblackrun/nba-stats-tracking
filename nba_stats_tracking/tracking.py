@@ -15,7 +15,7 @@ def get_tracking_response_json_for_stat_measure(
     :param str stat_measure: Options: Drives, Defense, CatchShoot, Passing, Possessions,
         PullUpShot, Rebounding, Efficiency, SpeedDistance, ElbowTouch, PostTouch, PaintTouch
     :param str season: Format YYYY-YY ex 2019-20
-    :param str season_type: Options are Regular Season or Playoffs
+    :param str season_type: Options are Regular Season or Playoffs or Play In
     :param str entity_type: Options are player or team
     :param str date_from: (optional) Format - MM/DD/YYYY
     :param str date_to: (optional) Format - MM/DD/YYYY
@@ -59,7 +59,7 @@ def get_tracking_stats(stat_measure, seasons, season_types, entity_type, **kwarg
     :param str stat_measure: Options: Drives, Defense, CatchShoot, Passing, Possessions,
         PullUpShot, Rebounding, Efficiency, SpeedDistance, ElbowTouch, PostTouch, PaintTouch
     :param list[str] seasons: List of seasons.Format YYYY-YY ex 2019-20
-    :param list[str] season_types: List of season types. Options are Regular Season or Playoffs
+    :param list[str] season_types: List of season types. Options are Regular Season or Playoffs or Play In
     :param str entity_type: Options are player or team
     :param str date_from: (optional) Format - MM/DD/YYYY
     :param str date_to: (optional) Format - MM/DD/YYYY
@@ -91,7 +91,7 @@ def aggregate_full_season_tracking_stats_for_seasons(
     :param str stat_measure: Options: Drives, Defense, CatchShoot, Passing, Possessions,
         PullUpShot, Rebounding, Efficiency, SpeedDistance, ElbowTouch, PostTouch, PaintTouch
     :param list[str] seasons: List of seasons.Format YYYY-YY ex 2019-20
-    :param list[str] season_types: List of season types. Options are Regular Season or Playoffs
+    :param list[str] season_types: List of season types. Options are Regular Season or Playoffs or Play In
     :param str entity_type: Options are player or team
     :param str opponent_team_id: (optional) nba.com team id
     :return: tuple with list of dicts for stats for each player/team and dict with league totals

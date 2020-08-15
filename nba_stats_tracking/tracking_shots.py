@@ -15,7 +15,7 @@ def get_tracking_shots_response(entity_type, season, season_type, **kwargs):
 
     :param str entity_type: Options are player, team or opponent
     :param str season: Format YYYY-YY ex 2019-20
-    :param str season_type: Options are Regular Season or Playoffs
+    :param str season_type: Options are Regular Season or Playoffs or Play In
     :param str date_from: (optional) Format - MM/DD/YYYY
     :param str date_to: (optional) Format - MM/DD/YYYY
     :param str close_def_dist: (optional) Defaults to "". Options: '', '0-2 Feet - Very Tight',
@@ -68,7 +68,7 @@ def get_tracking_shot_stats(entity_type, seasons, season_types, **kwargs):
 
     :param str entity_type: Options are player, team or opponent
     :param list[str] seasons: List of seasons.Format YYYY-YY ex 2019-20
-    :param list[str] season_types: List of season types. Options are Regular Season or Playoffs
+    :param list[str] season_types: List of season types. Options are Regular Season or Playoffs or Play In
     :param list[str] close_def_dists: (optional) Options: '', '0-2 Feet - Very Tight',
         '2-4 Feet - Tight','4-6 Feet - Open','6+ Feet - Wide Open'
     :param list[str] shot_clocks: (optional) - Options: '', '24-22',
@@ -194,7 +194,7 @@ def aggregate_full_season_tracking_shot_stats_for_seasons(
 
     :param str entity_type: Options are player, team or opponent
     :param list[str] seasons: List of seasons.Format YYYY-YY ex 2019-20
-    :param list[str] season_types: List of season types. Options are Regular Season or Playoffs
+    :param list[str] season_types: List of season types. Options are Regular Season or Playoffs or Play In
     :param list[str] close_def_dists: (optional) Options: '', '0-2 Feet - Very Tight',
         '2-4 Feet - Tight','4-6 Feet - Open','6+ Feet - Wide Open'
     :param list[str] shot_clocks: (optional) - Options: '', '24-22',

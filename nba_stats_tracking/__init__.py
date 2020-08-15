@@ -36,6 +36,7 @@ POSSESSIONS_MEASURE_TYPE = "Possessions"
 
 REGULAR_SEASON_STRING = "Regular Season"
 PLAYOFFS_STRING = "Playoffs"
+PLAY_IN_STRING = "Play In"
 
 PLAYER_STRING = "Player"
 TEAM_STRING = "Team"

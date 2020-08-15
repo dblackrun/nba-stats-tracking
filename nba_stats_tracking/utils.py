@@ -3,6 +3,7 @@ from nba_stats_tracking import (
     REQUEST_TIMEOUT,
     PLAYOFFS_STRING,
     REGULAR_SEASON_STRING,
+    PLAY_IN_STRING,
 )
 
 import requests
@@ -99,6 +100,8 @@ def get_season_type_from_game_id(game_id):
         return PLAYOFFS_STRING
     elif game_id[2] == "2":
         return REGULAR_SEASON_STRING
+    elif game_id[2] == "5":
+        return PLAY_IN_STRING
     return None
 
 
