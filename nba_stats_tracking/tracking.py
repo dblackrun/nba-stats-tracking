@@ -134,43 +134,45 @@ def generate_tracking_game_logs(
     team_id_game_id_map = kwargs.get("team_id_game_id_map")
     team_id_opponent_team_id_map = kwargs.get("team_id_opponent_team_id_map")
     player_id_team_id_map = kwargs.get("player_id_team_id_map")
+    get_player_id_team_id_map = player_id_team_id_map is None
+    get_team_id_maps = (
+        team_id_game_id_map is None or team_id_opponent_team_id_map is None
+    )
     game_logs = []
     for dt in rrule(DAILY, dtstart=start_date, until=end_date):
         date = dt.strftime("%m/%d/%Y")
-        if team_id_game_id_map is None or team_id_opponent_team_id_map is None:
+        if get_team_id_maps:
             (
                 team_id_game_id_map,
                 team_id_opponent_team_id_map,
             ) = utils.get_team_id_maps_for_date(date)
-        if len(team_id_game_id_map.values()) == 0:
-            return game_logs
-
-        date_game_id = list(team_id_game_id_map.values())[0]
-
-        season = utils.get_season_from_game_id(date_game_id)
-        season_type = utils.get_season_type_from_game_id(date_game_id)
-
-        tracking_game_logs = get_tracking_stats(
-            stat_measure,
-            [season],
-            [season_type],
-            entity_type,
-            date_from=date,
-            date_to=date,
-        )
-        if entity_type == "player":
-            # need to add team id for player because results only have last team id,
-            # which may not be the team for which they played the game
-            if player_id_team_id_map is None:
+        if len(team_id_game_id_map.values()) != 0:
+            if get_player_id_team_id_map:
                 player_id_team_id_map = utils.get_player_team_map_for_date(date)
+            date_game_id = list(team_id_game_id_map.values())[0]
+
+            season = utils.get_season_from_game_id(date_game_id)
+            season_type = utils.get_season_type_from_game_id(date_game_id)
+
+            tracking_game_logs = get_tracking_stats(
+                stat_measure,
+                [season],
+                [season_type],
+                entity_type,
+                date_from=date,
+                date_to=date,
+            )
+            if entity_type == "player":
+                # need to add team id for player because results only have last team id,
+                # which may not be the team for which they played the game
+                for game_log in tracking_game_logs:
+                    game_log["TEAM_ID"] = player_id_team_id_map[game_log["PLAYER_ID"]]
             for game_log in tracking_game_logs:
-                game_log["TEAM_ID"] = player_id_team_id_map[game_log["PLAYER_ID"]]
-        for game_log in tracking_game_logs:
-            game_log["GAME_ID"] = team_id_game_id_map[game_log["TEAM_ID"]]
-            game_log["OPPONENT_TEAM_ID"] = team_id_opponent_team_id_map[
-                game_log["TEAM_ID"]
-            ]
-        game_logs += tracking_game_logs
+                game_log["GAME_ID"] = team_id_game_id_map[game_log["TEAM_ID"]]
+                game_log["OPPONENT_TEAM_ID"] = team_id_opponent_team_id_map[
+                    game_log["TEAM_ID"]
+                ]
+            game_logs += tracking_game_logs
     return game_logs
 
 
