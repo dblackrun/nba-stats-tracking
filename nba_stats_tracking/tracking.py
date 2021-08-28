@@ -7,7 +7,7 @@ from nba_stats_tracking import utils
 
 
 def get_tracking_response_json_for_stat_measure(
-    stat_measure, season, season_type, entity_type, **kwargs
+    stat_measure, season, season_type, entity_type, per_mode, **kwargs
 ):
     """
     Makes API call to `NBA Advanced Stats <https://www.stats.nba.com/>`_ and returns JSON response
@@ -17,6 +17,7 @@ def get_tracking_response_json_for_stat_measure(
     :param str season: Format YYYY-YY ex 2019-20
     :param str season_type: Options are Regular Season or Playoffs or Play In
     :param str entity_type: Options are player or team
+    :param str per_mode: Options are PerGame and Totals
     :param str date_from: (optional) Format - MM/DD/YYYY
     :param str date_to: (optional) Format - MM/DD/YYYY
     :param str opponent_team_id: (optional) nba.com team id
@@ -40,7 +41,7 @@ def get_tracking_response_json_for_stat_measure(
         "Month": 0,
         "OpponentTeamID": kwargs.get("opponent_team_id", 0),
         "Outcome": "",
-        "PerMode": "Totals",
+        "PerMode": per_mode,
         "PlayerExperience": "",
         "PlayerPosition": "",
         "SeasonSegment": "",
@@ -52,7 +53,9 @@ def get_tracking_response_json_for_stat_measure(
     return utils.get_json_response(url, parameters)
 
 
-def get_tracking_stats(stat_measure, seasons, season_types, entity_type, **kwargs):
+def get_tracking_stats(
+    stat_measure, seasons, season_types, entity_type, per_mode="Totals", **kwargs
+):
     """
     Gets stat measure tracking stats for filter
 
@@ -61,6 +64,7 @@ def get_tracking_stats(stat_measure, seasons, season_types, entity_type, **kwarg
     :param list[str] seasons: List of seasons.Format YYYY-YY ex 2019-20
     :param list[str] season_types: List of season types. Options are Regular Season or Playoffs or Play In
     :param str entity_type: Options are player or team
+    :param str per_mode: Options are PerGame and Totals. Defaults to totals.
     :param str date_from: (optional) Format - MM/DD/YYYY
     :param str date_to: (optional) Format - MM/DD/YYYY
     :param str opponent_team_id: (optional) nba.com team id
@@ -72,7 +76,7 @@ def get_tracking_stats(stat_measure, seasons, season_types, entity_type, **kwarg
         for season_type in season_types:
             time.sleep(2)
             response_json = get_tracking_response_json_for_stat_measure(
-                stat_measure, season, season_type, entity_type, **kwargs
+                stat_measure, season, season_type, entity_type, per_mode, **kwargs
             )
             stats = utils.make_array_of_dicts_from_response_json(response_json, 0)
             for stat in stats:
@@ -159,6 +163,7 @@ def generate_tracking_game_logs(
                 [season],
                 [season_type],
                 entity_type,
+                "PerGame",
                 date_from=date,
                 date_to=date,
             )

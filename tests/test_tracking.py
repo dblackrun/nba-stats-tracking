@@ -49,7 +49,7 @@ def test_get_tracking_response_json_for_stat_measure():
     responses.add(responses.GET, url, json=tracking_response_json, status=200)
 
     response_json = tracking.get_tracking_response_json_for_stat_measure(
-        measure_type, season, season_type, entity_type
+        measure_type, season, season_type, entity_type, "Totals"
     )
     assert len(response_json["resultSets"][0]["rowSet"]) == 30
 
@@ -204,7 +204,7 @@ def test_generate_tracking_game_logs():
         "Month": 0,
         "OpponentTeamID": 0,
         "Outcome": "",
-        "PerMode": "Totals",
+        "PerMode": "PerGame",
         "PlayerExperience": "",
         "PlayerPosition": "",
         "SeasonSegment": "",
