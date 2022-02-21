@@ -23,7 +23,7 @@ keyring==23.5.0
 MarkupSafe==2.1.0
 mccabe==0.6.1
 more-itertools==8.2.0
-nba-stats-tracking==1.0.5
+nba-stats-tracking==1.0.6
 nodeenv==1.6.0
 orderedmultidict==1.0.1
 packaging==20.1
