@@ -30,6 +30,7 @@ Documentation
    :maxdepth: 4
 
    source/modules
+   source/models
 
 Notes
 ------
