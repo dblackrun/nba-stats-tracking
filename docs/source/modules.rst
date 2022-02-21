@@ -1,6 +1,14 @@
 Modules
 ==================
 
+matchups
+----------
+
+.. automodule:: nba_stats_tracking.matchups
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 tracking
 ----------
 
@@ -17,10 +25,10 @@ tracking\_shots
    :undoc-members:
    :show-inheritance:
 
-utils
-------
+helpers
+--------
 
-.. automodule:: nba_stats_tracking.utils
+.. automodule:: nba_stats_tracking.helpers
    :members:
    :undoc-members:
    :show-inheritance:
