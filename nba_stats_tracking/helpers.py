@@ -1,11 +1,10 @@
-from nba_stats_tracking import HEADERS, REQUEST_TIMEOUT
-
-from nba_stats_tracking.models import SeasonType
-
 from datetime import date
 from typing import Dict, List, Tuple
+
 import requests
 
+from nba_stats_tracking import HEADERS, REQUEST_TIMEOUT
+from nba_stats_tracking.models import SeasonType
 from nba_stats_tracking.models.boxscore import (
     BoxscoreRequestParameters,
     BoxscoreResults,

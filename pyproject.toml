@@ -19,3 +19,6 @@ exclude = '''
     | tests/data
 )/
 '''
+
+[tool.isort]
+profile = "black"
