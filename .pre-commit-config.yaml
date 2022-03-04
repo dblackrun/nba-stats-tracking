@@ -10,3 +10,8 @@ repos:
     rev: v4.0.1
     hooks:
       - id: trailing-whitespace
+  - repo: https://github.com/pycqa/isort
+    rev: 5.10.1
+    hooks:
+      - id: isort
+        name: isort (python)
