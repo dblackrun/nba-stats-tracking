@@ -1,28 +1,26 @@
 """Module containing functions for accessing tracking shot stats"""
 
-from enum import Enum
-import time
 import itertools
+import time
 from datetime import date
-from typing import Dict, List, Tuple, Union, TypedDict
+from enum import Enum
+from typing import Dict, List, Tuple, TypedDict, Union
 
-from dateutil.rrule import rrule, DAILY
+from dateutil.rrule import DAILY, rrule
 
 from nba_stats_tracking import helpers
 from nba_stats_tracking.models.request import SeasonType
 from nba_stats_tracking.models.tracking_shots import (
-    TrackingRequestParameters,
-    TrackingShotResults,
-    TrackingShotItem,
     CloseDefDist,
+    Dribbles,
+    GeneralRange,
     ShotClock,
     ShotDist,
     TouchTime,
-    Dribbles,
-    GeneralRange,
+    TrackingRequestParameters,
+    TrackingShotItem,
+    TrackingShotResults,
 )
-
-from enum import Enum
 
 
 class EntityType(str, Enum):

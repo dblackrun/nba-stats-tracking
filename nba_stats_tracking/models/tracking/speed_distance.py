@@ -1,6 +1,7 @@
-from pydantic import BaseModel, Field, validator
-from typing import List, Optional
 from dataclasses import dataclass
+from typing import List, Optional
+
+from pydantic import BaseModel, Field, validator
 
 
 class SpeedDistanceItem(BaseModel):

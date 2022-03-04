@@ -1,10 +1,10 @@
 import json
+from datetime import date
 
-import responses
 import pytest
 import requests
+import responses
 from furl import furl
-from datetime import date
 
 from nba_stats_tracking import helpers
 

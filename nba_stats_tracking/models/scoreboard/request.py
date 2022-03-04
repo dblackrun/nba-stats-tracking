@@ -1,4 +1,5 @@
 from datetime import date
+
 from pydantic import BaseModel, Field
 
 from nba_stats_tracking.models.request import LeagueID

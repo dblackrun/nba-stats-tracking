@@ -1,11 +1,11 @@
 import json
+from datetime import date
 
 import responses
 from furl import furl
-from datetime import date
 
-from nba_stats_tracking.models.request import SeasonType
 from nba_stats_tracking import tracking_shots
+from nba_stats_tracking.models.request import SeasonType
 from nba_stats_tracking.models.tracking_shots import (
     CloseDefDist,
     GeneralRange,

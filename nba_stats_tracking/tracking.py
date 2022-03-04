@@ -1,40 +1,40 @@
 import time
-
-from dateutil.rrule import rrule, DAILY
 from datetime import date
-from typing import Dict, List, Tuple, Union, Any
+from typing import Any, Dict, List, Tuple, Union
 
-from nba_stats_tracking.models.request import SeasonType, PerMode
-from nba_stats_tracking.models.tracking import (
-    TrackingRequestParameters,
-    TrackingMeasureType,
-    PlayerOrTeam,
-    CatchAndShootResults,
-    CatchAndShootItem,
-    DefenseResults,
-    DefenseItem,
-    DrivesResults,
-    DrivesItem,
-    EfficiencyResults,
-    EfficiencyItem,
-    ElbowTouchesResults,
-    ElbowTouchesItem,
-    PaintTouchesResults,
-    PaintTouchesItem,
-    PassingResults,
-    PassingItem,
-    PossessionsResults,
-    PossessionsItem,
-    PostTouchesResults,
-    PostTouchesItem,
-    PullUpResults,
-    PullUpItem,
-    ReboundingResults,
-    ReboundingItem,
-    SpeedDistanceResults,
-    SpeedDistanceItem,
-)
+from dateutil.rrule import DAILY, rrule
+
 from nba_stats_tracking import helpers
+from nba_stats_tracking.models.request import PerMode, SeasonType
+from nba_stats_tracking.models.tracking import (
+    CatchAndShootItem,
+    CatchAndShootResults,
+    DefenseItem,
+    DefenseResults,
+    DrivesItem,
+    DrivesResults,
+    EfficiencyItem,
+    EfficiencyResults,
+    ElbowTouchesItem,
+    ElbowTouchesResults,
+    PaintTouchesItem,
+    PaintTouchesResults,
+    PassingItem,
+    PassingResults,
+    PlayerOrTeam,
+    PossessionsItem,
+    PossessionsResults,
+    PostTouchesItem,
+    PostTouchesResults,
+    PullUpItem,
+    PullUpResults,
+    ReboundingItem,
+    ReboundingResults,
+    SpeedDistanceItem,
+    SpeedDistanceResults,
+    TrackingMeasureType,
+    TrackingRequestParameters,
+)
 
 RESPONSE_MODEL_MAP = {
     TrackingMeasureType.catch_and_shoot: CatchAndShootResults,

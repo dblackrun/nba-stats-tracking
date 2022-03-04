@@ -1,5 +1,5 @@
 from nba_stats_tracking import helpers
-from nba_stats_tracking.models.matchups import MatchupsRequestParameters, MatchupResults
+from nba_stats_tracking.models.matchups import MatchupResults, MatchupsRequestParameters
 
 
 def get_matchup_results_for_game_id(game_id: str) -> MatchupResults:

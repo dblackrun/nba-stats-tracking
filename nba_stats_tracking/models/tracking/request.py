@@ -1,6 +1,7 @@
 from enum import Enum
-from pydantic import BaseModel, Field
 from typing import Optional
+
+from pydantic import BaseModel, Field
 
 from nba_stats_tracking.models.request import PerMode, SeasonType
 
