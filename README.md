@@ -14,3 +14,22 @@ A package to work with NBA player tracking stats using the NBA Stats API.
 
 # Notes
 It looks like prior to 2018-19 blocked shots aren't included in the FGA tracking shot totals
+
+# Local Development
+Using [poetry](https://python-poetry.org/) for package managment. Install it first if it is not install on your system.
+
+`git clone https://github.com/dblackrun/nba-stats-tracking.git`
+
+`cd nba-stats-tracking`
+
+Install dependencies:
+
+`poetry install`
+
+Activate virtualenv:
+
+`poetry shell`
+
+Install pre-commit:
+
+`pre-commit install`
