@@ -14,5 +14,5 @@ class SeasonType(str, Enum):
 
 class LeagueID(str, Enum):
     nba = "00"
-    wnba = "10"
-    gleague = "20"
+    wnba = "10"  # unused for tracking stats but including it in case they ever are
+    gleague = "20"  # unused for tracking stats but including it in case they ever are
