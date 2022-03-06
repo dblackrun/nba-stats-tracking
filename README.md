@@ -8,6 +8,12 @@ A package to work with NBA player tracking stats using the NBA Stats API.
 * Aggregate tracking shot stats across multiple filters (ex Wide Open and 18-22 seconds left on the shot clock)
 * Generate game logs
 
+# Installation
+Tested on Python >=3.7
+```
+pip install nba_stats_tracking
+```
+
 # Resources
 [Documentation](https://nba-stats-tracking.readthedocs.io/en/latest/)
 
