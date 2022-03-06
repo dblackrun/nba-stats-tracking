@@ -9,7 +9,7 @@ A package to work with NBA player tracking stats using the NBA Stats API.
 * Generate game logs
 
 # Installation
-Tested on Python >=3.7
+Tested on Python >=3.8
 ```
 pip install nba_stats_tracking
 ```
