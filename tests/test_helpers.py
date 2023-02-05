@@ -11,7 +11,7 @@ from nba_stats_tracking import helpers
 
 @responses.activate
 def test_get_json_response_bad_response():
-    url = "https://stats.nba.com/stats/scoreboardV2"
+    url = "https://stats.nba.com/stats/scoreboardV3"
 
     responses.add(responses.GET, url, status=400)
     params = {}
@@ -24,7 +24,9 @@ def test_get_game_ids_for_date():
     with open("tests/data/scoreboard/response.json") as f:
         scoreboard_response = json.loads(f.read())
 
-    scoreboard_response_url = "https://stats.nba.com/stats/scoreboardV2?DayOffset=0&LeagueID=00&GameDate=2020-02-02"
+    scoreboard_response_url = (
+        "https://stats.nba.com/stats/scoreboardV3?LeagueID=00&GameDate=2020-02-02"
+    )
 
     responses.add(
         responses.GET, scoreboard_response_url, json=scoreboard_response, status=200
@@ -51,7 +53,9 @@ def test_get_team_id_maps_for_date():
     with open("tests/data/scoreboard/response.json") as f:
         scoreboard_response = json.loads(f.read())
 
-    scoreboard_response_url = "https://stats.nba.com/stats/scoreboardV2?DayOffset=0&LeagueID=00&GameDate=2020-02-02"
+    scoreboard_response_url = (
+        "https://stats.nba.com/stats/scoreboardV3?&LeagueID=00&GameDate=2020-02-02"
+    )
 
     responses.add(
         responses.GET, scoreboard_response_url, json=scoreboard_response, status=200
@@ -87,28 +91,132 @@ def test_get_team_id_maps_for_date():
 def test_get_player_team_map_for_date():
     with open("tests/data/scoreboard/response.json") as f:
         scoreboard_response = json.loads(f.read())
-    scoreboard_response["resultSets"][0]["rowSet"] = [
-        [
-            "2020-02-02T00:00:00",
-            4,
-            "0021900740",
-            3,
-            "Final",
-            "20200202/CHITOR",
-            1610612761,
-            1610612741,
-            "2019",
-            4,
-            "     ",
-            None,
-            "TSN1/4",
-            "NBCSCH",
-            "Q4       - ",
-            "Scotiabank Arena",
-            1,
-        ]
+    # hard code response to only have one game
+    scoreboard_response["scoreboard"]["games"] = [
+        {
+            "gameId": "0021900740",
+            "gameCode": "20200202/CHITOR",
+            "gameStatus": 3,
+            "gameStatusText": "Final",
+            "period": 4,
+            "gameClock": "",
+            "gameTimeUTC": "2020-02-02T20:00:00Z",
+            "gameEt": "2020-02-02T15:00:00Z",
+            "regulationPeriods": 4,
+            "seriesGameNumber": "",
+            "seriesText": "",
+            "ifNecessary": False,
+            "gameLeaders": {
+                "homeLeaders": {
+                    "personId": 1629056,
+                    "name": "Terence Davis",
+                    "playerSlug": "terence-davis",
+                    "jerseyNum": "0",
+                    "position": "G",
+                    "teamTricode": "TOR",
+                    "points": 31,
+                    "rebounds": 4,
+                    "assists": 1,
+                },
+                "awayLeaders": {
+                    "personId": 203897,
+                    "name": "Zach LaVine",
+                    "playerSlug": "zach-lavine",
+                    "jerseyNum": "8",
+                    "position": "G-F",
+                    "teamTricode": "CHI",
+                    "points": 18,
+                    "rebounds": 7,
+                    "assists": 7,
+                },
+            },
+            "teamLeaders": {
+                "homeLeaders": {
+                    "personId": 1627783,
+                    "name": "Pascal Siakam",
+                    "playerSlug": "pascal-siakam",
+                    "jerseyNum": "43",
+                    "position": "F",
+                    "teamTricode": "TOR",
+                    "points": 22.9,
+                    "rebounds": 7.3,
+                    "assists": 3.5,
+                },
+                "awayLeaders": {
+                    "personId": 203897,
+                    "name": "Zach LaVine",
+                    "playerSlug": "zach-lavine",
+                    "jerseyNum": "8",
+                    "position": "G-F",
+                    "teamTricode": "CHI",
+                    "points": 25.5,
+                    "rebounds": 4.8,
+                    "assists": 4.2,
+                },
+                "seasonLeadersFlag": 0,
+            },
+            "broadcasters": {
+                "nationalBroadcasters": [],
+                "nationalRadioBroadcasters": [],
+                "nationalOttBroadcasters": [],
+                "homeTvBroadcasters": [
+                    {"broadcasterId": 1546, "broadcastDisplay": "TSN1/4"}
+                ],
+                "homeRadioBroadcasters": [
+                    {"broadcasterId": 1053, "broadcastDisplay": "CJCL"}
+                ],
+                "homeOttBroadcasters": [],
+                "awayTvBroadcasters": [
+                    {"broadcasterId": 1656, "broadcastDisplay": "NBCSCH"}
+                ],
+                "awayRadioBroadcasters": [
+                    {"broadcasterId": 1687, "broadcastDisplay": "WSCR"}
+                ],
+                "awayOttBroadcasters": [],
+            },
+            "homeTeam": {
+                "teamId": 1610612761,
+                "teamName": "Raptors",
+                "teamCity": "Toronto",
+                "teamTricode": "TOR",
+                "teamSlug": "raptors",
+                "wins": 36,
+                "losses": 14,
+                "score": 129,
+                "seed": 0,
+                "inBonus": None,
+                "timeoutsRemaining": 1,
+                "periods": [
+                    {"period": 1, "periodType": "REGULAR", "score": 32},
+                    {"period": 2, "periodType": "REGULAR", "score": 28},
+                    {"period": 3, "periodType": "REGULAR", "score": 35},
+                    {"period": 4, "periodType": "REGULAR", "score": 34},
+                ],
+            },
+            "awayTeam": {
+                "teamId": 1610612741,
+                "teamName": "Bulls",
+                "teamCity": "Chicago",
+                "teamTricode": "CHI",
+                "teamSlug": "bulls",
+                "wins": 19,
+                "losses": 33,
+                "score": 102,
+                "seed": 0,
+                "inBonus": None,
+                "timeoutsRemaining": 0,
+                "periods": [
+                    {"period": 1, "periodType": "REGULAR", "score": 29},
+                    {"period": 2, "periodType": "REGULAR", "score": 34},
+                    {"period": 3, "periodType": "REGULAR", "score": 22},
+                    {"period": 4, "periodType": "REGULAR", "score": 17},
+                ],
+            },
+        }
     ]
-    scoreboard_response_url = "https://stats.nba.com/stats/scoreboardV2?DayOffset=0&LeagueID=00&GameDate=2020-02-02"
+    scoreboard_response_url = (
+        "https://stats.nba.com/stats/scoreboardV3?LeagueID=00&GameDate=2020-02-02"
+    )
 
     responses.add(
         responses.GET, scoreboard_response_url, json=scoreboard_response, status=200
@@ -118,14 +226,15 @@ def test_get_player_team_map_for_date():
     with open(f"tests/data/game/boxscore/{game_id}.json") as f:
         game_response_json = json.loads(f.read())
 
-    base_url = "https://stats.nba.com/stats/boxscoretraditionalv2"
+    base_url = "https://stats.nba.com/stats/boxscoretraditionalv3"
     query_params = {
-        "GameId": game_id,
+        "GameID": game_id,
         "StartPeriod": 0,
         "EndPeriod": 10,
         "RangeType": 2,
         "StartRange": 0,
         "EndRange": 55800,
+        "LeagueID": "00",
     }
     url = furl(base_url).add(query_params).url
 

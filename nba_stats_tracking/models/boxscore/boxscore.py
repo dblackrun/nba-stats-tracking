@@ -1,50 +1,31 @@
-from dataclasses import dataclass
 from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
 
-class BoxscoreItem(BaseModel):
-    game_id: str = Field(alias="GAME_ID")
-    team_id: int = Field(alias="TEAM_ID")
-    team_abbreviation: str = Field(alias="TEAM_ABBREVIATION")
-    team_city: str = Field(alias="TEAM_CITY")
-    player_id: int = Field(alias="PLAYER_ID")
-    player_name: str = Field(alias="PLAYER_NAME")
-    start_position: str = Field(alias="START_POSITION")
-    comment: str = Field(alias="COMMENT")
-    minutes: Optional[str] = Field(alias="MIN")
-    fgm: Optional[int] = Field(alias="FGM")
-    fga: Optional[int] = Field(alias="FGA")
-    fg_pct: Optional[float] = Field(alias="FG_PCT")
-    fg3m: Optional[int] = Field(alias="FG3M")
-    fg3a: Optional[int] = Field(alias="FG3A")
-    fg3_pct: Optional[int] = Field(alias="FG3_PCT")
-    ftm: Optional[int] = Field(alias="FTM")
-    fta: Optional[int] = Field(alias="FTA")
-    ft_pct: Optional[float] = Field(alias="FT_PCT")
-    oreb: Optional[int] = Field(alias="OREB")
-    dreb: Optional[int] = Field(alias="DREB")
-    reb: Optional[int] = Field(alias="REB")
-    stl: Optional[int] = Field(alias="STL")
-    blk: Optional[int] = Field(alias="BLK")
-    turnovers: Optional[int] = Field(alias="TO")
-    fouls: Optional[int] = Field(alias="PF")
-    points: Optional[int] = Field(alias="PTS")
-    plus_minutes: Optional[float] = Field(alias="PLUS_MINUS")
-
-    def __getitem__(self, item):
-        return getattr(self, item)
+class BoxScorePlayer(BaseModel):
+    player_id: Optional[int] = Field(alias="personId")
+    first_name: Optional[str] = Field(alias="firstName")
+    family_name: Optional[str] = Field(alias="familyName")
+    name_initial: Optional[str] = Field(alias="nameI")
+    player_slug: Optional[str] = Field(alias="playerSlug")
+    position: Optional[str] = Field(alias="position")
+    comment: Optional[str] = Field(alias="comment")
+    jersey_num: Optional[str] = Field(alias="jerseyNum")
 
 
-@dataclass
-class BoxscoreResults:
-    results: List[BoxscoreItem]
+class BoxscoreTeam(BaseModel):
+    team_id: Optional[int] = Field(alias="teamId")
+    team_city: Optional[str] = Field(alias="teamCity")
+    team_name: Optional[str] = Field(alias="teamName")
+    team_tricode: Optional[str] = Field(alias="teamTricode")
+    team_slug: Optional[str] = Field(alias="teamSlug")
+    players: List[BoxScorePlayer] = Field(alias="players")
 
-    def __init__(self, **kwargs):
-        headers = kwargs.get("headers", [])
-        rows = kwargs.get("rowSet", [])
-        self.results = [BoxscoreItem(**dict(zip(headers, row))) for row in rows]
 
-    def __iter__(self):
-        return iter(self.results)
+class BoxscoreResults(BaseModel):
+    game_id: str = Field(alias="gameId")
+    away_team_id: int = Field(alias="awayTeamId")
+    home_team_id: int = Field(alias="homeTeamId")
+    home_team: BoxscoreTeam = Field(alias="homeTeam")
+    away_team: BoxscoreTeam = Field(alias="awayTeam")

@@ -35,11 +35,10 @@ def get_scoreboard_response_json_for_date(game_date: date) -> Dict:
     parameters = ScoreboardRequestParameters(GameDate=game_date)
 
     response_json = get_json_response(
-        "https://stats.nba.com/stats/scoreboardV2", parameters.dict(by_alias=True)
+        "https://stats.nba.com/stats/scoreboardV3", parameters.dict(by_alias=True)
     )
 
-    # stats will be contained in first item of resultSets
-    return response_json["resultSets"][0]
+    return response_json["scoreboard"]
 
 
 def get_game_ids_for_date(game_date: date) -> List[str]:
@@ -47,8 +46,8 @@ def get_game_ids_for_date(game_date: date) -> List[str]:
     Gets game ids for all games played on a given date
     """
     results = get_scoreboard_response_json_for_date(game_date)
-    games = ScoreboardResults(**results)
-    return [game.game_id for game in games]
+    scoreboard_result = ScoreboardResults(**results)
+    return [game.game_id for game in scoreboard_result.games]
 
 
 def get_season_from_game_id(game_id: str) -> str:
@@ -84,15 +83,14 @@ def get_boxscore_response_for_game(game_id: str) -> Dict:
     """
     Gets response data from boxscore endpoint for nba.com game id
     """
-    parameters = BoxscoreRequestParameters(GameId=game_id)
+    parameters = BoxscoreRequestParameters(GameID=game_id)
 
     response_json = get_json_response(
-        "https://stats.nba.com/stats/boxscoretraditionalv2",
+        "https://stats.nba.com/stats/boxscoretraditionalv3",
         parameters.dict(by_alias=True),
     )
 
-    # stats will be contained in first item of resultSets
-    return response_json["resultSets"][0]
+    return response_json["boxScoreTraditional"]
 
 
 def get_team_id_maps_for_date(game_date: date) -> Tuple[Dict, Dict]:
@@ -101,14 +99,14 @@ def get_team_id_maps_for_date(game_date: date) -> Tuple[Dict, Dict]:
     to opponent team id for games on a given date
     """
     results = get_scoreboard_response_json_for_date(game_date)
-    games = ScoreboardResults(**results)
+    scoreboard_result = ScoreboardResults(**results)
     team_id_game_id_map = {}
     team_id_opponent_id_map = {}
-    for game in games:
-        team_id_game_id_map[game.home_team_id] = game.game_id
-        team_id_game_id_map[game.visitor_team_id] = game.game_id
-        team_id_opponent_id_map[game.home_team_id] = game.visitor_team_id
-        team_id_opponent_id_map[game.visitor_team_id] = game.home_team_id
+    for game in scoreboard_result.games:
+        team_id_game_id_map[game.home_team.team_id] = game.game_id
+        team_id_game_id_map[game.visitor_team.team_id] = game.game_id
+        team_id_opponent_id_map[game.home_team.team_id] = game.visitor_team.team_id
+        team_id_opponent_id_map[game.visitor_team.team_id] = game.home_team.team_id
     return team_id_game_id_map, team_id_opponent_id_map
 
 
@@ -117,8 +115,11 @@ def make_player_team_map_for_game(boxscore_data: BoxscoreResults) -> Dict:
     Creates a dict mapping player id to team id for a game
     """
     player_game_team_map = {
-        player.player_id: player.team_id for player in boxscore_data
+        player.player_id: boxscore_data.away_team.team_id
+        for player in boxscore_data.away_team.players
     }
+    for player in boxscore_data.home_team.players:
+        player_game_team_map[player.player_id] = boxscore_data.home_team.team_id
 
     return player_game_team_map
 
