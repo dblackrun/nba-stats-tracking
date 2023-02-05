@@ -25,7 +25,7 @@ profile = "black"
 
 [tool.poetry]
 name = "nba_stats_tracking"
-version = "1.0.7"
+version = "1.0.8"
 description = "A package to work with NBA player tracking stats using the NBA Stats API"
 authors = ["dblackrun <darryl.blackport@gmail.com>"]
 license = "MIT License"
